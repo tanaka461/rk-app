@@ -6,7 +6,6 @@ from transformers import CLIPProcessor, CLIPModel
 from PIL import Image
 import io
 import base64
-import os
 import streamlit.components.v1 as components
 
 # --- 1. ページ設定 & CSSによる翻訳の完全拒否 ---
@@ -23,134 +22,7 @@ st.markdown("""
 
 st.title("👜 相場検索アプリ")
 
-# --- 2. 双方向通信対応カメラコンポーネントの自動生成 ---
-CAM_DIR = "camera_component"
-os.makedirs(CAM_DIR, exist_ok=True)
-index_html_path = os.path.join(CAM_DIR, "index.html")
-
-html_content = """<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://cdn.jsdelivr.net/npm/streamlit-component-lib@1.4.0/dist/streamlit-component-lib.js"></script>
-<style>
-    body { margin: 0; padding: 0; background: transparent; }
-    .cam-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        max-width: 800px;
-        margin: 0 auto;
-        background-color: #111;
-        border-radius: 16px;
-        padding: 12px;
-        box-sizing: border-box;
-    }
-    video {
-        width: 100%;
-        height: 400px;
-        object-fit: cover;
-        border-radius: 12px;
-        background-color: #000;
-    }
-    .controls {
-        margin-top: 12px;
-        margin-bottom: 5px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    .shutter-btn {
-        width: 70px;
-        height: 70px;
-        background-color: #ff3b30;
-        border: 4px solid #ffffff;
-        border-radius: 50%;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-        cursor: pointer;
-        outline: none;
-        transition: transform 0.1s;
-    }
-    .shutter-btn:active {
-        transform: scale(0.92);
-        background-color: #d70015;
-    }
-    .btn-label {
-        color: #fff;
-        font-size: 14px;
-        font-weight: bold;
-        margin-top: 8px;
-    }
-</style>
-</head>
-<body>
-<div class="cam-container">
-    <video id="webcam" autoplay playsinline muted></video>
-    <canvas id="canvas" style="display:none;"></canvas>
-    <div class="controls">
-        <button class="shutter-btn" id="snap-btn" onclick="takePhoto()"></button>
-        <div class="btn-label" id="btn-label">タップして撮影</div>
-    </div>
-</div>
-
-<script>
-    const video = document.getElementById('webcam');
-    const canvas = document.getElementById('canvas');
-
-    if (window.Streamlit) {
-        window.Streamlit.setComponentReady();
-        window.Streamlit.setFrameHeight(520);
-    }
-
-    navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { exact: "environment" } },
-        audio: false
-    }).catch(function(err) {
-        return navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "environment" },
-            audio: false
-        });
-    }).catch(function(err) {
-        return navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: false
-        });
-    }).then(function(stream) {
-        video.srcObject = stream;
-    }).catch(function(err) {
-        console.error("Camera access error:", err);
-    });
-
-    function takePhoto() {
-        document.getElementById('btn-label').innerText = "解析中...";
-        
-        const targetWidth = 600;
-        const aspect = (video.videoHeight || 480) / (video.videoWidth || 640);
-        
-        canvas.width = targetWidth;
-        canvas.height = targetWidth * aspect;
-        
-        const context = canvas.getContext('2d');
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-        
-        if (window.Streamlit) {
-            window.Streamlit.setComponentValue(dataUrl);
-        }
-    }
-</script>
-</body>
-</html>
-"""
-
-with open(index_html_path, "w", encoding="utf-8") as f:
-    f.write(html_content)
-
-custom_camera = components.declare_component("custom_camera", path=CAM_DIR)
-
-# --- 3. AIモデル (遅延ロード対応) & DB設定 ---
+# --- 2. AIモデル (遅延ロード対応) & DB設定 ---
 @st.cache_resource
 def load_model():
     MODEL_NAME = "openai/clip-vit-base-patch16"
@@ -245,7 +117,7 @@ def search_by_keyword(keyword, top_k=50):
         })
     return results
 
-# --- 4. タブUI構成 ---
+# --- 3. タブUI構成 ---
 tab_main1, tab_main2 = st.tabs(["🔍 型番・キーワード検索", "📷 画像で検索"])
 
 uploaded_image = None
@@ -260,19 +132,133 @@ with tab_main2:
     with sub_tab1:
         st.write("背面カメラで商品を撮影してください")
         
-        # 双方向コンポーネントから値を取得
-        camera_data = custom_camera(key="rear_camera_cmp")
-        
-        if camera_data and isinstance(camera_data, str) and "data:image" in camera_data:
+        # iframeとの連動用クエリパラメータ取得
+        query_params = st.query_params
+        captured_data = query_params.get("cam_img", None)
+
+        camera_html = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            .cam-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+                max-width: 800px;
+                margin: 0 auto;
+                background-color: #111;
+                border-radius: 16px;
+                padding: 12px;
+                box-sizing: border-box;
+            }
+            video {
+                width: 100%;
+                height: 400px;
+                object-fit: cover;
+                border-radius: 12px;
+                background-color: #000;
+            }
+            .controls {
+                margin-top: 12px;
+                margin-bottom: 5px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .shutter-btn {
+                width: 70px;
+                height: 70px;
+                background-color: #ff3b30;
+                border: 4px solid #ffffff;
+                border-radius: 50%;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+                cursor: pointer;
+                outline: none;
+                transition: transform 0.1s;
+            }
+            .shutter-btn:active {
+                transform: scale(0.92);
+                background-color: #d70015;
+            }
+            .btn-label {
+                color: #fff;
+                font-size: 14px;
+                font-weight: bold;
+                margin-top: 8px;
+            }
+        </style>
+        </head>
+        <body>
+        <div class="cam-container">
+            <video id="webcam" autoplay playsinline muted></video>
+            <canvas id="canvas" style="display:none;"></canvas>
+            <div class="controls">
+                <button class="shutter-btn" id="snap-btn" onclick="takePhoto()"></button>
+                <div class="btn-label" id="btn-label">タップして撮影</div>
+            </div>
+        </div>
+
+        <script>
+            const video = document.getElementById('webcam');
+            const canvas = document.getElementById('canvas');
+
+            navigator.mediaDevices.getUserMedia({
+                video: { facingMode: { exact: "environment" } },
+                audio: false
+            }).catch(function(err) {
+                return navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: "environment" },
+                    audio: false
+                });
+            }).catch(function(err) {
+                return navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: false
+                });
+            }).then(function(stream) {
+                video.srcObject = stream;
+            }).catch(function(err) {
+                console.error("Camera access error:", err);
+            });
+
+            function takePhoto() {
+                document.getElementById('btn-label').innerText = "解析中...";
+                
+                const targetWidth = 500;
+                const aspect = (video.videoHeight || 480) / (video.videoWidth || 640);
+                
+                canvas.width = targetWidth;
+                canvas.height = targetWidth * aspect;
+                
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                
+                // 親ウィンドウ（Streamlit）のURLパラメータを書き換えて再読み込み
+                const url = new URL(window.parent.location.href);
+                url.searchParams.set('cam_img', dataUrl);
+                window.parent.location.href = url.toString();
+            }
+        </script>
+        </body>
+        </html>
+        """
+        components.html(camera_html, height=520)
+
+        if captured_data:
             try:
-                base64_str = camera_data.split("base64,")[1].strip()
+                base64_str = captured_data.split("base64,")[1].strip()
                 missing_padding = len(base64_str) % 4
                 if missing_padding:
                     base64_str += '=' * (4 - missing_padding)
 
                 img_data = base64.b64decode(base64_str)
                 uploaded_image = Image.open(io.BytesIO(img_data)).convert("RGB")
-            except Exception as e:
+            except Exception:
                 st.error("画像の受信に失敗しました。もう一度撮影してください。")
 
     with sub_tab2:
@@ -280,7 +266,7 @@ with tab_main2:
         if file_input:
             uploaded_image = Image.open(file_input).convert("RGB")
 
-# --- 5. 検索結果表示 ---
+# --- 4. 検索結果表示 ---
 if uploaded_image:
     st.divider()
     col_img, col_info = st.columns([1, 2])
