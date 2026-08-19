@@ -132,10 +132,7 @@ with tab_main2:
     with sub_tab1:
         st.write("背面カメラで商品を撮影してください")
         
-        # iframeとの連動用クエリパラメータ取得
-        query_params = st.query_params
-        captured_data = query_params.get("cam_img", None)
-
+        # 前回動作していたカメラ構成 (軽量化 & イベント送信補強)
         camera_html = """
         <!DOCTYPE html>
         <html>
@@ -227,7 +224,8 @@ with tab_main2:
             function takePhoto() {
                 document.getElementById('btn-label').innerText = "解析中...";
                 
-                const targetWidth = 500;
+                // 画像サイズを最適化（データ軽量化）
+                const targetWidth = 400;
                 const aspect = (video.videoHeight || 480) / (video.videoWidth || 640);
                 
                 canvas.width = targetWidth;
@@ -236,22 +234,25 @@ with tab_main2:
                 const context = canvas.getContext('2d');
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
                 
+                // 画質調整して軽量なDataURLを生成
                 const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
                 
-                // 親ウィンドウ（Streamlit）のURLパラメータを書き換えて再読み込み
-                const url = new URL(window.parent.location.href);
-                url.searchParams.set('cam_img', dataUrl);
-                window.parent.location.href = url.toString();
+                // 親のStreamlitウィンドウにイベント送信
+                window.parent.postMessage({
+                    isStreamlitMessage: true,
+                    type: "streamlit:setComponentValue",
+                    value: dataUrl
+                }, "*");
             }
         </script>
         </body>
         </html>
         """
-        components.html(camera_html, height=520)
+        camera_data = components.html(camera_html, height=520)
 
-        if captured_data:
+        if camera_data and isinstance(camera_data, str) and "data:image" in camera_data:
             try:
-                base64_str = captured_data.split("base64,")[1].strip()
+                base64_str = camera_data.split("base64,")[1].strip()
                 missing_padding = len(base64_str) % 4
                 if missing_padding:
                     base64_str += '=' * (4 - missing_padding)
