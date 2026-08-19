@@ -17,9 +17,66 @@ st.markdown("""
     <meta name="google" content="notranslate">
 """, unsafe_allow_html=True)
 
+# --- 2. カメラUIのカスタマイズ (CSS注入) ---
+st.markdown("""
+    <style>
+        /* カメラ入力コンテナの外観調整 */
+        [data-testid="stCameraInput"] {
+            max-width: 500px;
+            margin: 0 auto;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* カメラ映像枠の角丸調整 */
+        [data-testid="stCameraInput"] video {
+            border-radius: 12px !important;
+            object-fit: cover !important;
+        }
+
+        /* シャッターボタンのデザイン変更 (丸型・赤い撮影ボタン風) */
+        [data-testid="stCameraInput"] button {
+            background-color: #ff3b30 !important;
+            color: #ffffff !important;
+            border: 4px solid #ffffff !important;
+            border-radius: 50% !important;
+            width: 72px !important;
+            height: 72px !important;
+            min-height: 72px !important;
+            padding: 0 !important;
+            margin: 10px auto !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
+            transition: transform 0.1s ease, background-color 0.1s ease !important;
+        }
+
+        /* クリック（タップ）時のアニメーション */
+        [data-testid="stCameraInput"] button:active {
+            transform: scale(0.92) !important;
+            background-color: #d70015 !important;
+        }
+
+        /* ボタン内のテキスト（「 Take Photo 」等）を非表示にして中央に丸印を設置 */
+        [data-testid="stCameraInput"] button * {
+            display: none !important;
+        }
+        [data-testid="stCameraInput"] button::after {
+            content: "" !important;
+            width: 24px !important;
+            height: 24px !important;
+            background-color: #ffffff !important;
+            border-radius: 50% !important;
+            display: block !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 st.title("👜 相場検索アプリ")
 
-# --- 2. AIモデル (遅延ロード対応) & DB設定 ---
+# --- 3. AIモデル (遅延ロード対応) & DB設定 ---
 @st.cache_resource
 def load_model():
     MODEL_NAME = "openai/clip-vit-base-patch16"
@@ -114,7 +171,7 @@ def search_by_keyword(keyword, top_k=50):
         })
     return results
 
-# --- 3. タブUI構成 ---
+# --- 4. タブUI構成 ---
 tab_main1, tab_main2 = st.tabs(["🔍 型番・キーワード検索", "📷 画像で検索"])
 
 uploaded_image = None
@@ -127,7 +184,38 @@ with tab_main2:
     sub_tab1, sub_tab2 = st.tabs(["📸 アプリ内で撮影して検索", "📁 画像をアップロード"])
     
     with sub_tab1:
-        st.write("画面のカメラで商品を撮影してください")
+        st.write("背面カメラで商品を撮影してください（中央の赤ボタンで撮影）")
+        
+        # 背面カメラ(environment)を強制指定するためのJavaScriptスクリプトを差し込み
+        st.components.v1.html("""
+            <script>
+            const setRearCamera = () => {
+                const parent = window.parent.document;
+                const video = parent.querySelector('[data-testid="stCameraInput"] video');
+                if (video && video.srcObject) {
+                    const tracks = video.srcObject.getVideoTracks();
+                    if (tracks.length > 0) {
+                        const currentConstraints = tracks[0].getConstraints();
+                        if (currentConstraints.facingMode !== "environment") {
+                            navigator.mediaDevices.getUserMedia({
+                                video: { facingMode: { exact: "environment" } }
+                            }).then(stream => {
+                                video.srcObject = stream;
+                            }).catch(() => {
+                                navigator.mediaDevices.getUserMedia({
+                                    video: { facingMode: "environment" }
+                                }).then(stream => {
+                                    video.srcObject = stream;
+                                });
+                            });
+                        }
+                    }
+                }
+            };
+            setTimeout(setRearCamera, 1000);
+            </script>
+        """, height=0)
+
         camera_file = st.camera_input("カメラ撮影", key="native_camera_input")
         if camera_file:
             uploaded_image = Image.open(camera_file).convert("RGB")
@@ -137,7 +225,7 @@ with tab_main2:
         if file_input:
             uploaded_image = Image.open(file_input).convert("RGB")
 
-# --- 4. 検索結果表示 ---
+# --- 5. 検索結果表示 ---
 if uploaded_image:
     st.divider()
     col_img, col_info = st.columns([1, 2])
