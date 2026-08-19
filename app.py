@@ -31,7 +31,6 @@ st.components.v1.html("""
 
             const originalGetUserMedia = mediaDevices.getUserMedia.bind(mediaDevices);
 
-            // Streamlitがカメラを呼び出す前にリクエストを外カメラ（environment）に強制書換
             mediaDevices.getUserMedia = function(constraints) {
                 if (constraints && constraints.video) {
                     if (typeof constraints.video === 'boolean') {
@@ -52,7 +51,6 @@ st.components.v1.html("""
 # --- 3. カメラUIの拡大 & 赤いシャッターボタンデザイン ---
 st.markdown("""
     <style>
-        /* カメラ表示枠の拡大 */
         [data-testid="stCameraInput"] {
             width: 100% !important;
             max-width: 800px !important;
@@ -69,7 +67,6 @@ st.markdown("""
             border-radius: 12px !important;
         }
 
-        /* 赤い大きな丸型シャッターボタン */
         [data-testid="stCameraInput"] button {
             background-color: #ff3b30 !important;
             color: #ffffff !important;
@@ -200,17 +197,36 @@ def search_by_keyword(keyword, top_k=50):
         })
     return results
 
-# --- 5. タブUI構成 ---
+# --- 5. タブUI構成 & 各タブ内独立検索処理 ---
 tab_main1, tab_main2 = st.tabs(["🔍 型番・キーワード検索", "📷 画像で検索"])
 
-uploaded_image = None
-search_keyword = None
-
+# --- タブ1: 型番・キーワード検索 ---
 with tab_main1:
     search_keyword = st.text_input("商品名や型番を入力 (例: バーキン トゴ, M43735)", "", key="kw_input")
+    
+    if search_keyword and search_keyword.strip():
+        st.divider()
+        kw_results = search_by_keyword(search_keyword.strip(), top_k=50)
+        st.subheader(f"🔍 「{search_keyword.strip()}」の検索結果 ({len(kw_results)} 件)")
 
+        if not kw_results:
+            st.warning("一致する商品が見つかりませんでした。別のキーワードでお試しください。")
+        else:
+            cols = st.columns(3)
+            for idx, item in enumerate(kw_results):
+                with cols[idx % 3]:
+                    st.image(item["img_url"], use_container_width=True)
+                    st.markdown(f"**{item['title']}**")
+                    if item["model"]:
+                        st.caption(f"型番: {item['model']}")
+                    st.subheader(f"¥{item['price']:,}")
+                    st.caption(f"🏛️ **RK** ｜ 📅 {item['date']}")
+                    st.divider()
+
+# --- タブ2: 画像で検索 ---
 with tab_main2:
     sub_tab1, sub_tab2 = st.tabs(["📸 アプリ内で撮影して検索", "📁 画像をアップロード"])
+    uploaded_image = None
     
     with sub_tab1:
         camera_file = st.camera_input("アプリ内カメラ", key="app_camera")
@@ -222,49 +238,29 @@ with tab_main2:
         if file_input:
             uploaded_image = Image.open(file_input).convert("RGB")
 
-# --- 6. 検索結果表示 ---
-if uploaded_image:
-    st.divider()
-    col_img, col_info = st.columns([1, 2])
-    with col_img:
-        st.image(uploaded_image, caption="撮影／選択画像", use_container_width=True)
-    with col_info:
-        st.info("AIモデルで特徴量を抽出して検索中...")
+    if uploaded_image:
+        st.divider()
+        col_img, col_info = st.columns([1, 2])
+        with col_img:
+            st.image(uploaded_image, caption="撮影／選択画像", use_container_width=True)
+        with col_info:
+            st.info("AIモデルで特徴量を抽出して検索中...")
 
-    query_vec = get_image_features(uploaded_image)
-    results = search_similar(query_vec, top_k=12)
+        query_vec = get_image_features(uploaded_image)
+        results = search_similar(query_vec, top_k=12)
 
-    st.subheader("🎉 AI類似検索結果（上位12件）")
-    if not results:
-        st.warning("該当するデータが見つかりませんでした。")
-    else:
-        cols = st.columns(3)
-        for idx, item in enumerate(results):
-            with cols[idx % 3]:
-                st.image(item["img_url"], use_container_width=True)
-                st.markdown(f"**{item['title']}**")
-                if item["model"]:
-                    st.caption(f"型番: {item['model']}")
-                st.subheader(f"¥{item['price']:,}")
-                st.caption(f"🏛️ **RK** ｜ 📅 {item['date']}")
-                st.caption(f"類似度: {item['similarity']*100:.1f}%")
-                st.divider()
-
-elif search_keyword and search_keyword.strip():
-    st.divider()
-    kw_results = search_by_keyword(search_keyword.strip(), top_k=50)
-    st.subheader(f"🔍 「{search_keyword}」の検索結果 ({len(kw_results)} 件)")
-
-    if not kw_results:
-        st.warning("一致する商品が見つかりませんでした。別のキーワードでお試しください。")
-    else:
-        cols = st.columns(3)
-        for idx, item in enumerate(kw_results):
-            with cols[idx % 3]:
-                st.image(item["img_url"], use_container_width=True)
-                st.markdown(f"**{item['title']}**")
-                if item["model"]:
-                    st.caption(f"型番: {item['model']}")
-                st.subheader(f"¥{item['price']:,}")
-                st.caption(f"🏛️ **RK** ｜ 📅 {item['date']}")
-                st.divider()
+        st.subheader("🎉 AI類似検索結果（上位12件）")
+        if not results:
+            st.warning("該当するデータが見つかりませんでした。")
+        else:
+            cols = st.columns(3)
+            for idx, item in enumerate(results):
+                with cols[idx % 3]:
+                    st.image(item["img_url"], use_container_width=True)
+                    st.markdown(f"**{item['title']}**")
+                    if item["model"]:
+                        st.caption(f"型番: {item['model']}")
+                    st.subheader(f"¥{item['price']:,}")
+                    st.caption(f"🏛️ **RK** ｜ 📅 {item['date']}")
+                    st.caption(f"類似度: {item['similarity']*100:.1f}%")
+                    st.divider()
