@@ -17,63 +17,48 @@ st.markdown("""
     <meta name="google" content="notranslate">
 """, unsafe_allow_html=True)
 
-# --- 2. カメラUIのカスタマイズ (サイズ拡大 & シャッターボタンデザイン) ---
+# --- 2. カメラ・ファイル選択ボタンのUIカスタマイズ ---
 st.markdown("""
     <style>
-        /* カメラ入力コンテナのサイズ拡大（最大幅を広げ、アスペクト比を最適化） */
-        [data-testid="stCameraInput"] {
+        /* アップローダー枠のデザイン調整 */
+        [data-testid="stFileUploader"] {
             width: 100% !important;
-            max-width: 800px !important; /* 横幅を大きく拡大 */
+            max-width: 600px !important;
             margin: 0 auto !important;
+            padding: 20px !important;
+            border: 2px dashed #007aff !important;
             border-radius: 16px !important;
-            overflow: hidden !important;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2) !important;
+            background-color: #f8f9fa !important;
+            text-align: center !important;
+        }
+
+        /* 大きな赤いシャッターボタン風UIの作成 */
+        .custom-camera-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
         }
         
-        /* カメラ映像表示枠を大きく拡大 */
-        [data-testid="stCameraInput"] video {
-            width: 100% !important;
-            height: auto !important;
-            min-height: 480px !important; /* 縦幅を大きく拡大 */
-            border-radius: 12px !important;
-            object-fit: cover !important;
+        .shutter-icon {
+            width: 80px;
+            height: 80px;
+            background-color: #ff3b30;
+            border: 5px solid #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
         }
-
-        /* 赤いシャッターボタンのデザイン */
-        [data-testid="stCameraInput"] button {
-            background-color: #ff3b30 !important;
-            color: #ffffff !important;
-            border: 4px solid #ffffff !important;
-            border-radius: 50% !important;
-            width: 76px !important;
-            height: 76px !important;
-            min-height: 76px !important;
-            padding: 0 !important;
-            margin: 15px auto !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
-            transition: transform 0.1s ease, background-color 0.1s ease !important;
-        }
-
-        /* クリック（タップ）時のアニメーション */
-        [data-testid="stCameraInput"] button:active {
-            transform: scale(0.90) !important;
-            background-color: #d70015 !important;
-        }
-
-        /* ボタン内の文字列を消去し、中央の円形アイコンのみ表示 */
-        [data-testid="stCameraInput"] button * {
-            display: none !important;
-        }
-        [data-testid="stCameraInput"] button::after {
-            content: "" !important;
-            width: 26px !important;
-            height: 26px !important;
-            background-color: #ffffff !important;
-            border-radius: 50% !important;
-            display: block !important;
+        
+        .shutter-icon-inner {
+            width: 28px;
+            height: 28px;
+            background-color: #ffffff;
+            border-radius: 50%;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -185,64 +170,41 @@ with tab_main1:
     search_keyword = st.text_input("商品名や型番を入力 (例: バーキン トゴ, M43735)", "", key="kw_input")
 
 with tab_main2:
-    sub_tab1, sub_tab2 = st.tabs(["📸 アプリ内で撮影して検索", "📁 画像をアップロード"])
+    sub_tab1, sub_tab2 = st.tabs(["📸 外カメラで撮影して検索", "📁 アルバムから選択"])
     
     with sub_tab1:
-        st.write("背面カメラで商品を撮影してください（中央の赤ボタンで撮影）")
+        st.write("▼ 下のボタンを押すと**外カメラ**が起動します")
         
-        # デバイスのカメラ一覧を取得し、外カメラ（back/environment/rear）を判別して選択するスクリプト
+        # HTMLのcapture="environment"属性を注入して外カメラを直接起動させるJavaScript
         st.components.v1.html("""
             <script>
-            async function switchRearCamera() {
-                try {
-                    const doc = window.parent.document;
-                    const videoEl = doc.querySelector('[data-testid="stCameraInput"] video');
-                    if (!videoEl) return;
-
-                    const devices = await navigator.mediaDevices.enumerateDevices();
-                    const videoDevices = devices.filter(d => d.kind === 'videoinput');
-                    
-                    // 「back」「rear」「environment」等のキーワードが含まれるカメラを探す
-                    let rearDevice = videoDevices.find(d => 
-                        d.label.toLowerCase().includes('back') || 
-                        d.label.toLowerCase().includes('rear') || 
-                        d.label.toLowerCase().includes('environment')
-                    );
-
-                    // 見つからない場合は最後のカメラデバイス（通常スマホでは背面）を選択
-                    if (!rearDevice && videoDevices.length > 1) {
-                        rearDevice = videoDevices[videoDevices.length - 1];
-                    }
-
-                    const constraints = rearDevice 
-                        ? { video: { deviceId: { exact: rearDevice.deviceId } } }
-                        : { video: { facingMode: { exact: "environment" } } };
-
-                    const stream = await navigator.mediaDevices.getUserMedia(constraints);
-                    videoEl.srcObject = stream;
-                } catch (e) {
-                    // フォールバック（通常要求）
-                    try {
-                        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-                        const doc = window.parent.document;
-                        const videoEl = doc.querySelector('[data-testid="stCameraInput"] video');
-                        if (videoEl) videoEl.srcObject = stream;
-                    } catch(err) {}
-                }
+            function enforceRearCamera() {
+                const parent = window.parent.document;
+                const fileInputs = parent.querySelectorAll('input[type="file"]');
+                fileInputs.forEach(input => {
+                    input.setAttribute('capture', 'environment');
+                    input.setAttribute('accept', 'image/*');
+                });
             }
-
-            // カメラ準備を待って実行
-            setTimeout(switchRearCamera, 800);
-            setTimeout(switchRearCamera, 2000);
+            setInterval(enforceRearCamera, 500);
             </script>
         """, height=0)
 
-        camera_file = st.camera_input("カメラ撮影", key="native_camera_input")
+        # 大きな撮影ボタン風のビジュアル表示
+        st.markdown("""
+            <div class="custom-camera-btn">
+                <div class="shutter-icon">
+                    <div class="shutter-icon-inner"></div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+
+        camera_file = st.file_uploader("タップして外カメラで撮影", type=["jpg", "jpeg", "png", "webp"], key="rear_camera_uploader")
         if camera_file:
             uploaded_image = Image.open(camera_file).convert("RGB")
 
     with sub_tab2:
-        file_input = st.file_uploader("画像ファイルを選択してください", type=["jpg", "jpeg", "png", "webp"])
+        file_input = st.file_uploader("画像ファイルを選択してください", type=["jpg", "jpeg", "png", "webp"], key="gallery_uploader")
         if file_input:
             uploaded_image = Image.open(file_input).convert("RGB")
 
