@@ -74,18 +74,16 @@ def search_similar(query_vector, top_k=12):
     results.sort(key=lambda x: x["similarity"], reverse=True)
     return results[:top_k]
 
-# テキスト（型番・キーワード）検索（スペース区切りのAND検索対応）
+# テキスト（型番・キーワード）検索（複数ワードAND検索 & 表示数50件拡張）
 def search_by_keyword(keyword, top_k=30):
     conn = sqlite3.connect("rk_data.db")
     c = conn.cursor()
     
-    # 全角スペースを半角スペースに統一して分解
     keywords = keyword.replace(" ", " ").split()
     if not keywords:
         conn.close()
         return []
 
-    # 入力されたすべての単語が含まれる条件（AND検索）を動的生成
     where_clauses = []
     params = []
     for kw in keywords:
@@ -134,6 +132,7 @@ with tab_main2:
     with sub_tab1:
         st.write("カメラで商品を撮影してください")
         
+        # 安定したデータ送信ロジックに修正したカメラHTML/JS
         camera_html = """
         <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
             <video id="webcam" autoplay playsinline style="width: 100%; max-width: 600px; height: auto; border-radius: 12px; border: 3px solid #4A90E2; background-color: #000;"></video>
@@ -176,12 +175,18 @@ with tab_main2:
                 canvas.height = video.videoHeight;
                 const context = canvas.getContext('2d');
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                const dataUrl = canvas.toDataURL('image/jpeg');
                 
-                window.parent.postMessage({
-                    type: 'streamlit:setComponentValue',
-                    value: dataUrl
-                }, '*');
+                // JPEGデータURLを取得して親フレームへ確実に送信
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                
+                if (window.Streamlit) {
+                    window.Streamlit.setComponentValue(dataUrl);
+                } else {
+                    window.parent.postMessage({
+                        type: 'streamlit:setComponentValue',
+                        value: dataUrl
+                    }, '*');
+                }
             }
         </script>
         """
@@ -189,10 +194,16 @@ with tab_main2:
         
         if camera_data:
             try:
-                img_data = base64.b64decode(camera_data.split(',')[1])
+                # 送信データのプレフィックス判定を強化
+                if "," in str(camera_data):
+                    base64_str = camera_data.split(',')[1]
+                else:
+                    base64_str = camera_data
+                
+                img_data = base64.b64decode(base64_str)
                 uploaded_image = Image.open(io.BytesIO(img_data)).convert("RGB")
-            except Exception:
-                st.error("画像の読み込みに失敗しました。")
+            except Exception as e:
+                st.error("画像の読み込みに失敗しました。もう一度シャッターを押してください。")
 
     with sub_tab2:
         file_input = st.file_uploader("画像ファイルを選択してください", type=["jpg", "jpeg", "png", "webp"])
@@ -229,7 +240,7 @@ if uploaded_image:
 
 elif search_keyword.strip():
     st.divider()
-    kw_results = search_by_keyword(search_keyword.strip(), top_k=30)
+    kw_results = search_by_keyword(search_keyword.strip(), top_k=50)
     st.subheader(f"🔍 「{search_keyword}」の検索結果 ({len(kw_results)} 件)")
 
     if not kw_results:
