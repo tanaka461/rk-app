@@ -5,8 +5,6 @@ import torch
 from transformers import CLIPProcessor, CLIPModel
 from PIL import Image
 import io
-import base64
-import streamlit.components.v1 as components
 
 # --- 1. ページ設定 & CSSによる翻訳の完全拒否 ---
 st.set_page_config(page_title="相場検索アプリ", layout="wide")
@@ -130,149 +128,11 @@ with tab_main2:
     sub_tab1, sub_tab2 = st.tabs(["📸 カメラで撮影して検索", "📁 画像をアップロード"])
     
     with sub_tab1:
-        st.write("背面カメラで商品を撮影してください")
-        
-        # 通信ライブラリ(streamlit-component-lib)組み込み済みのカメラHTML
-        camera_html = """
-        <!DOCTYPE html>
-        <html>
-        <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- Streamlitコンポーネント通信ライブラリ -->
-        <script src="https://cdn.jsdelivr.net/npm/streamlit-component-lib@1.4.0/dist/streamlit-component-lib.js"></script>
-        <style>
-            .cam-container {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                width: 100%;
-                max-width: 800px;
-                margin: 0 auto;
-                background-color: #111;
-                border-radius: 16px;
-                padding: 12px;
-                box-sizing: border-box;
-            }
-            video {
-                width: 100%;
-                height: 450px;
-                object-fit: cover;
-                border-radius: 12px;
-                background-color: #000;
-            }
-            .controls {
-                margin-top: 12px;
-                margin-bottom: 5px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-            .shutter-btn {
-                width: 72px;
-                height: 72px;
-                background-color: #ff3b30;
-                border: 5px solid #ffffff;
-                border-radius: 50%;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-                cursor: pointer;
-                outline: none;
-                transition: transform 0.1s;
-            }
-            .shutter-btn:active {
-                transform: scale(0.92);
-                background-color: #d70015;
-            }
-            .btn-label {
-                color: #ccc;
-                font-size: 13px;
-                font-weight: bold;
-                margin-top: 6px;
-            }
-        </style>
-        </head>
-        <body>
-        <div class="cam-container">
-            <video id="webcam" autoplay playsinline muted></video>
-            <canvas id="canvas" style="display:none;"></canvas>
-            <div class="controls">
-                <button class="shutter-btn" id="snap-btn" onclick="takePhoto()"></button>
-                <div class="btn-label" id="btn-label">タップして撮影</div>
-            </div>
-        </div>
-
-        <script>
-            const video = document.getElementById('webcam');
-            const canvas = document.getElementById('canvas');
-
-            // Streamlitの準備完了を通知
-            if (window.Streamlit) {
-                window.Streamlit.setComponentReady();
-            }
-
-            navigator.mediaDevices.getUserMedia({
-                video: { facingMode: { exact: "environment" } },
-                audio: false
-            }).catch(function(err) {
-                return navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "environment" },
-                    audio: false
-                });
-            }).catch(function(err) {
-                return navigator.mediaDevices.getUserMedia({
-                    video: true,
-                    audio: false
-                });
-            }).then(function(stream) {
-                video.srcObject = stream;
-            }).catch(function(err) {
-                console.error("Camera access error:", err);
-            });
-
-            function takePhoto() {
-                const label = document.getElementById('btn-label');
-                label.innerText = '解析中...';
-                
-                const targetWidth = 600;
-                const aspect = (video.videoHeight || 480) / (video.videoWidth || 640);
-                
-                canvas.width = targetWidth;
-                canvas.height = targetWidth * aspect;
-                
-                const context = canvas.getContext('2d');
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                
-                // Streamlitに撮影データを直接送信
-                if (window.Streamlit) {
-                    window.Streamlit.setComponentValue(dataUrl);
-                }
-            }
-        </script>
-        </body>
-        </html>
-        """
-        camera_data = components.html(camera_html, height=580)
-        
-        if camera_data and isinstance(camera_data, str) and len(camera_data) > 100:
-            try:
-                raw_str = camera_data
-                if "base64," in raw_str:
-                    base64_str = raw_str.split("base64,")[1]
-                elif "," in raw_str:
-                    base64_str = raw_str.split(",")[1]
-                else:
-                    base64_str = raw_str
-                
-                base64_str = base64_str.strip()
-                missing_padding = len(base64_str) % 4
-                if missing_padding:
-                    base64_str += '=' * (4 - missing_padding)
-
-                img_data = base64.b64decode(base64_str)
-                uploaded_image = Image.open(io.BytesIO(img_data)).convert("RGB")
-            except Exception:
-                st.error("画像の処理中にエラーが発生しました。もう一度撮影してください。")
+        st.write("カメラで商品を撮影してください")
+        # Streamlit公式の標準カメラ入力（即座にPythonへ反映）
+        camera_file = st.camera_input("写真を撮影", key="native_cam")
+        if camera_file:
+            uploaded_image = Image.open(camera_file).convert("RGB")
 
     with sub_tab2:
         file_input = st.file_uploader("画像ファイルを選択してください", type=["jpg", "jpeg", "png", "webp"])
