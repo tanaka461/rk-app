@@ -130,9 +130,8 @@ with tab_main2:
     sub_tab1, sub_tab2 = st.tabs(["📸 カメラで撮影して検索", "📁 画像をアップロード"])
     
     with sub_tab1:
-        st.write("背面カメラで商品を枠内に合わせて撮影してください")
+        st.write("背面カメラで商品を撮影してください")
         
-        # 背面カメラ優先・大画面ビューポート・丸型シャッターボタンHTML/JS
         camera_html = """
         <!DOCTYPE html>
         <html>
@@ -153,21 +152,21 @@ with tab_main2:
             }
             video {
                 width: 100%;
-                height: 480px;
+                height: 450px;
                 object-fit: cover;
                 border-radius: 12px;
                 background-color: #000;
             }
             .controls {
-                margin-top: 15px;
+                margin-top: 12px;
                 margin-bottom: 5px;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
             }
             .shutter-btn {
-                width: 76px;
-                height: 76px;
+                width: 72px;
+                height: 72px;
                 background-color: #ff3b30;
                 border: 5px solid #ffffff;
                 border-radius: 50%;
@@ -202,18 +201,15 @@ with tab_main2:
             const video = document.getElementById('webcam');
             const canvas = document.getElementById('canvas');
 
-            // 背面カメラ（environment）を優先してストリームを開始
             navigator.mediaDevices.getUserMedia({
-                video: { facingMode: { exact: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } },
+                video: { facingMode: { exact: "environment" } },
                 audio: false
             }).catch(function(err) {
-                // フォールバック（標準の背面設定）
                 return navigator.mediaDevices.getUserMedia({
                     video: { facingMode: "environment" },
                     audio: false
                 });
             }).catch(function(err) {
-                // PCなどで外カメラが無い場合は通常のカメラを起動
                 return navigator.mediaDevices.getUserMedia({
                     video: true,
                     audio: false
@@ -225,13 +221,16 @@ with tab_main2:
             });
 
             function takePhoto() {
-                canvas.width = video.videoWidth || 640;
-                canvas.height = video.videoHeight || 480;
+                const targetWidth = 600;
+                const aspect = (video.videoHeight || 480) / (video.videoWidth || 640);
+                
+                canvas.width = targetWidth;
+                canvas.height = targetWidth * aspect;
+                
                 const context = canvas.getContext('2d');
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
                 
-                // 画質0.8で圧縮して軽量・安定送信
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
                 
                 window.parent.postMessage({
                     type: 'streamlit:setComponentValue',
@@ -242,19 +241,28 @@ with tab_main2:
         </body>
         </html>
         """
-        camera_data = components.html(camera_html, height=600)
+        camera_data = components.html(camera_html, height=580)
         
-        if camera_data:
+        # 判定を修正：シャッターを押して有効な文字列が入ってきた時だけデコードを実行する
+        if camera_data and isinstance(camera_data, str) and len(camera_data) > 100:
             try:
-                if "," in str(camera_data):
-                    base64_str = str(camera_data).split(',')[1]
+                raw_str = camera_data
+                if "base64," in raw_str:
+                    base64_str = raw_str.split("base64,")[1]
+                elif "," in raw_str:
+                    base64_str = raw_str.split(",")[1]
                 else:
-                    base64_str = str(camera_data)
+                    base64_str = raw_str
                 
+                base64_str = base64_str.strip()
+                missing_padding = len(base64_str) % 4
+                if missing_padding:
+                    base64_str += '=' * (4 - missing_padding)
+
                 img_data = base64.b64decode(base64_str)
                 uploaded_image = Image.open(io.BytesIO(img_data)).convert("RGB")
-            except Exception as e:
-                st.error("画像の読み込みに失敗しました。もう一度シャッターボタンを押してください。")
+            except Exception:
+                st.error("画像の処理中にエラーが発生しました。もう一度撮影してください。")
 
     with sub_tab2:
         file_input = st.file_uploader("画像ファイルを選択してください", type=["jpg", "jpeg", "png", "webp"])
