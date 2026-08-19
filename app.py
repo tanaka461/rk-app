@@ -17,55 +17,66 @@ st.markdown("""
     <meta name="google" content="notranslate">
 """, unsafe_allow_html=True)
 
-# --- 2. カメラ・ファイル選択ボタンのUIカスタマイズ ---
+# --- 2. カメラUIの拡大 & 赤ボタンデザイン ---
 st.markdown("""
     <style>
-        /* アップローダー枠のデザイン調整 */
-        [data-testid="stFileUploader"] {
+        /* カメラ入力枠を画面一杯に拡大 */
+        [data-testid="stCameraInput"] {
             width: 100% !important;
-            max-width: 600px !important;
+            max-width: 900px !important;
             margin: 0 auto !important;
-            padding: 20px !important;
-            border: 2px dashed #007aff !important;
             border-radius: 16px !important;
-            background-color: #f8f9fa !important;
-            text-align: center !important;
+            overflow: hidden !important;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2) !important;
+        }
+        
+        /* 映像表示領域を大幅拡大 */
+        [data-testid="stCameraInput"] video {
+            width: 100% !important;
+            height: 550px !important; /* 高さを大きく確保 */
+            object-fit: cover !important;
+            border-radius: 12px !important;
         }
 
-        /* 大きな赤いシャッターボタン風UIの作成 */
-        .custom-camera-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin: 20px 0;
+        /* 赤い大きなシャッターボタン */
+        [data-testid="stCameraInput"] button {
+            background-color: #ff3b30 !important;
+            color: #ffffff !important;
+            border: 4px solid #ffffff !important;
+            border-radius: 50% !important;
+            width: 80px !important;
+            height: 80px !important;
+            min-height: 80px !important;
+            padding: 0 !important;
+            margin: 15px auto !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
         }
-        
-        .shutter-icon {
-            width: 80px;
-            height: 80px;
-            background-color: #ff3b30;
-            border: 5px solid #ffffff;
-            border-radius: 50%;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
+
+        [data-testid="stCameraInput"] button:active {
+            transform: scale(0.92) !important;
+            background-color: #d70015 !important;
         }
-        
-        .shutter-icon-inner {
-            width: 28px;
-            height: 28px;
-            background-color: #ffffff;
-            border-radius: 50%;
+
+        [data-testid="stCameraInput"] button * {
+            display: none !important;
+        }
+        [data-testid="stCameraInput"] button::after {
+            content: "" !important;
+            width: 28px !important;
+            height: 28px !important;
+            background-color: #ffffff !important;
+            border-radius: 50% !important;
+            display: block !important;
         }
     </style>
 """, unsafe_allow_html=True)
 
 st.title("👜 相場検索アプリ")
 
-# --- 3. AIモデル (遅延ロード対応) & DB設定 ---
+# --- 3. AIモデル & DB設定 ---
 @st.cache_resource
 def load_model():
     MODEL_NAME = "openai/clip-vit-base-patch16"
@@ -87,7 +98,6 @@ def get_image_features(image):
     feats = feats / torch.norm(feats, p=2, dim=-1, keepdim=True)
     return feats.numpy().flatten()
 
-# ベクトル（画像）類似度検索
 def search_similar(query_vector, top_k=12):
     conn = sqlite3.connect("rk_data.db")
     c = conn.cursor()
@@ -117,7 +127,6 @@ def search_similar(query_vector, top_k=12):
     results.sort(key=lambda x: x["similarity"], reverse=True)
     return results[:top_k]
 
-# テキスト（型番・キーワード）検索（AND検索 & 表示50件）
 def search_by_keyword(keyword, top_k=50):
     conn = sqlite3.connect("rk_data.db")
     c = conn.cursor()
@@ -170,41 +179,55 @@ with tab_main1:
     search_keyword = st.text_input("商品名や型番を入力 (例: バーキン トゴ, M43735)", "", key="kw_input")
 
 with tab_main2:
-    sub_tab1, sub_tab2 = st.tabs(["📸 外カメラで撮影して検索", "📁 アルバムから選択"])
+    sub_tab1, sub_tab2 = st.tabs(["📸 アプリ内で撮影して検索", "📁 画像をアップロード"])
     
     with sub_tab1:
-        st.write("▼ 下のボタンを押すと**外カメラ**が起動します")
-        
-        # HTMLのcapture="environment"属性を注入して外カメラを直接起動させるJavaScript
+        # st.camera_inputの映像ストリームを停止し、外カメラ（facingMode: environment）で再接続する処理
         st.components.v1.html("""
             <script>
-            function enforceRearCamera() {
-                const parent = window.parent.document;
-                const fileInputs = parent.querySelectorAll('input[type="file"]');
-                fileInputs.forEach(input => {
-                    input.setAttribute('capture', 'environment');
-                    input.setAttribute('accept', 'image/*');
-                });
+            async function forceRearCamera() {
+                try {
+                    const doc = window.parent.document;
+                    const videoEl = doc.querySelector('[data-testid="stCameraInput"] video');
+                    if (!videoEl) return;
+
+                    // 既に切り替え済みの場合は処理しない
+                    if (videoEl.getAttribute('data-rear-override') === 'true') return;
+
+                    // 既存の内カメラのストリームを強制停止
+                    if (videoEl.srcObject) {
+                        const tracks = videoEl.srcObject.getTracks();
+                        tracks.forEach(track => track.stop());
+                    }
+
+                    // 外カメラ（environment）のストリームを取得してセット
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: { exact: "environment" } }
+                    }).catch(async () => {
+                        return await navigator.mediaDevices.getUserMedia({
+                            video: { facingMode: "environment" }
+                        });
+                    });
+
+                    videoEl.srcObject = stream;
+                    videoEl.setAttribute('data-rear-override', 'true');
+                } catch (err) {
+                    console.log("Rear camera setup warning:", err);
+                }
             }
-            setInterval(enforceRearCamera, 500);
+
+            // 定期的に監視してカメラ枠が生成されたら切り替え実行
+            const interval = setInterval(forceRearCamera, 400);
+            setTimeout(() => clearInterval(interval), 10000);
             </script>
         """, height=0)
 
-        # 大きな撮影ボタン風のビジュアル表示
-        st.markdown("""
-            <div class="custom-camera-btn">
-                <div class="shutter-icon">
-                    <div class="shutter-icon-inner"></div>
-                </div>
-            </div>
-        """, unsafe_allow_html=True)
-
-        camera_file = st.file_uploader("タップして外カメラで撮影", type=["jpg", "jpeg", "png", "webp"], key="rear_camera_uploader")
+        camera_file = st.camera_input("アプリ内カメラ", key="app_camera")
         if camera_file:
             uploaded_image = Image.open(camera_file).convert("RGB")
 
     with sub_tab2:
-        file_input = st.file_uploader("画像ファイルを選択してください", type=["jpg", "jpeg", "png", "webp"], key="gallery_uploader")
+        file_input = st.file_uploader("画像ファイルを選択してください", type=["jpg", "jpeg", "png", "webp"], key="file_up")
         if file_input:
             uploaded_image = Image.open(file_input).convert("RGB")
 
