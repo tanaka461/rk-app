@@ -17,56 +17,60 @@ st.markdown("""
     <meta name="google" content="notranslate">
 """, unsafe_allow_html=True)
 
-# --- 2. カメラUIのカスタマイズ (CSS注入) ---
+# --- 2. カメラUIのカスタマイズ (サイズ拡大 & シャッターボタンデザイン) ---
 st.markdown("""
     <style>
-        /* カメラ入力コンテナの外観調整 */
+        /* カメラ入力コンテナのサイズ拡大（最大幅を広げ、アスペクト比を最適化） */
         [data-testid="stCameraInput"] {
-            max-width: 500px;
-            margin: 0 auto;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            width: 100% !important;
+            max-width: 800px !important; /* 横幅を大きく拡大 */
+            margin: 0 auto !important;
+            border-radius: 16px !important;
+            overflow: hidden !important;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2) !important;
         }
         
-        /* カメラ映像枠の角丸調整 */
+        /* カメラ映像表示枠を大きく拡大 */
         [data-testid="stCameraInput"] video {
+            width: 100% !important;
+            height: auto !important;
+            min-height: 480px !important; /* 縦幅を大きく拡大 */
             border-radius: 12px !important;
             object-fit: cover !important;
         }
 
-        /* シャッターボタンのデザイン変更 (丸型・赤い撮影ボタン風) */
+        /* 赤いシャッターボタンのデザイン */
         [data-testid="stCameraInput"] button {
             background-color: #ff3b30 !important;
             color: #ffffff !important;
             border: 4px solid #ffffff !important;
             border-radius: 50% !important;
-            width: 72px !important;
-            height: 72px !important;
-            min-height: 72px !important;
+            width: 76px !important;
+            height: 76px !important;
+            min-height: 76px !important;
             padding: 0 !important;
-            margin: 10px auto !important;
+            margin: 15px auto !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
             transition: transform 0.1s ease, background-color 0.1s ease !important;
         }
 
         /* クリック（タップ）時のアニメーション */
         [data-testid="stCameraInput"] button:active {
-            transform: scale(0.92) !important;
+            transform: scale(0.90) !important;
             background-color: #d70015 !important;
         }
 
-        /* ボタン内のテキスト（「 Take Photo 」等）を非表示にして中央に丸印を設置 */
+        /* ボタン内の文字列を消去し、中央の円形アイコンのみ表示 */
         [data-testid="stCameraInput"] button * {
             display: none !important;
         }
         [data-testid="stCameraInput"] button::after {
             content: "" !important;
-            width: 24px !important;
-            height: 24px !important;
+            width: 26px !important;
+            height: 26px !important;
             background-color: #ffffff !important;
             border-radius: 50% !important;
             display: block !important;
@@ -186,33 +190,50 @@ with tab_main2:
     with sub_tab1:
         st.write("背面カメラで商品を撮影してください（中央の赤ボタンで撮影）")
         
-        # 背面カメラ(environment)を強制指定するためのJavaScriptスクリプトを差し込み
+        # デバイスのカメラ一覧を取得し、外カメラ（back/environment/rear）を判別して選択するスクリプト
         st.components.v1.html("""
             <script>
-            const setRearCamera = () => {
-                const parent = window.parent.document;
-                const video = parent.querySelector('[data-testid="stCameraInput"] video');
-                if (video && video.srcObject) {
-                    const tracks = video.srcObject.getVideoTracks();
-                    if (tracks.length > 0) {
-                        const currentConstraints = tracks[0].getConstraints();
-                        if (currentConstraints.facingMode !== "environment") {
-                            navigator.mediaDevices.getUserMedia({
-                                video: { facingMode: { exact: "environment" } }
-                            }).then(stream => {
-                                video.srcObject = stream;
-                            }).catch(() => {
-                                navigator.mediaDevices.getUserMedia({
-                                    video: { facingMode: "environment" }
-                                }).then(stream => {
-                                    video.srcObject = stream;
-                                });
-                            });
-                        }
+            async function switchRearCamera() {
+                try {
+                    const doc = window.parent.document;
+                    const videoEl = doc.querySelector('[data-testid="stCameraInput"] video');
+                    if (!videoEl) return;
+
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                    const videoDevices = devices.filter(d => d.kind === 'videoinput');
+                    
+                    // 「back」「rear」「environment」等のキーワードが含まれるカメラを探す
+                    let rearDevice = videoDevices.find(d => 
+                        d.label.toLowerCase().includes('back') || 
+                        d.label.toLowerCase().includes('rear') || 
+                        d.label.toLowerCase().includes('environment')
+                    );
+
+                    // 見つからない場合は最後のカメラデバイス（通常スマホでは背面）を選択
+                    if (!rearDevice && videoDevices.length > 1) {
+                        rearDevice = videoDevices[videoDevices.length - 1];
                     }
+
+                    const constraints = rearDevice 
+                        ? { video: { deviceId: { exact: rearDevice.deviceId } } }
+                        : { video: { facingMode: { exact: "environment" } } };
+
+                    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                    videoEl.srcObject = stream;
+                } catch (e) {
+                    // フォールバック（通常要求）
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                        const doc = window.parent.document;
+                        const videoEl = doc.querySelector('[data-testid="stCameraInput"] video');
+                        if (videoEl) videoEl.srcObject = stream;
+                    } catch(err) {}
                 }
-            };
-            setTimeout(setRearCamera, 1000);
+            }
+
+            // カメラ準備を待って実行
+            setTimeout(switchRearCamera, 800);
+            setTimeout(switchRearCamera, 2000);
             </script>
         """, height=0)
 
