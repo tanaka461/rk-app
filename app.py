@@ -155,7 +155,7 @@ def search_similar(query_vector, top_k=12):
     results.sort(key=lambda x: x["similarity"], reverse=True)
     return results[:top_k]
 
-def search_by_keyword(keyword, top_k=50):
+def search_by_keyword(keyword, top_k=30):
     conn = sqlite3.connect("rk_data.db")
     c = conn.cursor()
     
