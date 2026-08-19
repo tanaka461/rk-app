@@ -17,36 +17,67 @@ st.markdown("""
     <meta name="google" content="notranslate">
 """, unsafe_allow_html=True)
 
-# --- 2. カメラUIの拡大 & 赤ボタンデザイン ---
+# --- 2. ブラウザのカメラ起動処理を横取りして最初から外カメラに固定 ---
+st.components.v1.html("""
+    <script>
+    (function() {
+        try {
+            const pWin = window.parent;
+            if (!pWin || pWin.__rear_camera_patched) return;
+            pWin.__rear_camera_patched = true;
+
+            const mediaDevices = pWin.navigator.mediaDevices;
+            if (!mediaDevices || !mediaDevices.getUserMedia) return;
+
+            const originalGetUserMedia = mediaDevices.getUserMedia.bind(mediaDevices);
+
+            // Streamlitがカメラを呼び出す前にリクエストを外カメラ（environment）に強制書換
+            mediaDevices.getUserMedia = function(constraints) {
+                if (constraints && constraints.video) {
+                    if (typeof constraints.video === 'boolean') {
+                        constraints.video = { facingMode: { ideal: "environment" } };
+                    } else if (typeof constraints.video === 'object') {
+                        constraints.video.facingMode = { ideal: "environment" };
+                    }
+                }
+                return originalGetUserMedia(constraints);
+            };
+        } catch (e) {
+            console.error("Camera patch error:", e);
+        }
+    })();
+    </script>
+""", height=0)
+
+# --- 3. カメラUIの拡大 & 赤いシャッターボタンデザイン ---
 st.markdown("""
     <style>
-        /* カメラ入力枠を画面一杯に拡大 */
+        /* カメラ表示枠の拡大 */
         [data-testid="stCameraInput"] {
             width: 100% !important;
-            max-width: 900px !important;
+            max-width: 800px !important;
             margin: 0 auto !important;
             border-radius: 16px !important;
             overflow: hidden !important;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2) !important;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25) !important;
         }
         
-        /* 映像表示領域を大幅拡大 */
         [data-testid="stCameraInput"] video {
             width: 100% !important;
-            height: 550px !important; /* 高さを大きく確保 */
+            height: 520px !important;
             object-fit: cover !important;
             border-radius: 12px !important;
         }
 
-        /* 赤い大きなシャッターボタン */
+        /* 赤い大きな丸型シャッターボタン */
         [data-testid="stCameraInput"] button {
             background-color: #ff3b30 !important;
             color: #ffffff !important;
             border: 4px solid #ffffff !important;
             border-radius: 50% !important;
-            width: 80px !important;
-            height: 80px !important;
-            min-height: 80px !important;
+            width: 78px !important;
+            height: 78px !important;
+            min-height: 78px !important;
             padding: 0 !important;
             margin: 15px auto !important;
             display: flex !important;
@@ -56,7 +87,7 @@ st.markdown("""
         }
 
         [data-testid="stCameraInput"] button:active {
-            transform: scale(0.92) !important;
+            transform: scale(0.90) !important;
             background-color: #d70015 !important;
         }
 
@@ -65,8 +96,8 @@ st.markdown("""
         }
         [data-testid="stCameraInput"] button::after {
             content: "" !important;
-            width: 28px !important;
-            height: 28px !important;
+            width: 26px !important;
+            height: 26px !important;
             background-color: #ffffff !important;
             border-radius: 50% !important;
             display: block !important;
@@ -76,7 +107,7 @@ st.markdown("""
 
 st.title("👜 相場検索アプリ")
 
-# --- 3. AIモデル & DB設定 ---
+# --- 4. AIモデル & DB設定 ---
 @st.cache_resource
 def load_model():
     MODEL_NAME = "openai/clip-vit-base-patch16"
@@ -169,7 +200,7 @@ def search_by_keyword(keyword, top_k=50):
         })
     return results
 
-# --- 4. タブUI構成 ---
+# --- 5. タブUI構成 ---
 tab_main1, tab_main2 = st.tabs(["🔍 型番・キーワード検索", "📷 画像で検索"])
 
 uploaded_image = None
@@ -182,46 +213,6 @@ with tab_main2:
     sub_tab1, sub_tab2 = st.tabs(["📸 アプリ内で撮影して検索", "📁 画像をアップロード"])
     
     with sub_tab1:
-        # st.camera_inputの映像ストリームを停止し、外カメラ（facingMode: environment）で再接続する処理
-        st.components.v1.html("""
-            <script>
-            async function forceRearCamera() {
-                try {
-                    const doc = window.parent.document;
-                    const videoEl = doc.querySelector('[data-testid="stCameraInput"] video');
-                    if (!videoEl) return;
-
-                    // 既に切り替え済みの場合は処理しない
-                    if (videoEl.getAttribute('data-rear-override') === 'true') return;
-
-                    // 既存の内カメラのストリームを強制停止
-                    if (videoEl.srcObject) {
-                        const tracks = videoEl.srcObject.getTracks();
-                        tracks.forEach(track => track.stop());
-                    }
-
-                    // 外カメラ（environment）のストリームを取得してセット
-                    const stream = await navigator.mediaDevices.getUserMedia({
-                        video: { facingMode: { exact: "environment" } }
-                    }).catch(async () => {
-                        return await navigator.mediaDevices.getUserMedia({
-                            video: { facingMode: "environment" }
-                        });
-                    });
-
-                    videoEl.srcObject = stream;
-                    videoEl.setAttribute('data-rear-override', 'true');
-                } catch (err) {
-                    console.log("Rear camera setup warning:", err);
-                }
-            }
-
-            // 定期的に監視してカメラ枠が生成されたら切り替え実行
-            const interval = setInterval(forceRearCamera, 400);
-            setTimeout(() => clearInterval(interval), 10000);
-            </script>
-        """, height=0)
-
         camera_file = st.camera_input("アプリ内カメラ", key="app_camera")
         if camera_file:
             uploaded_image = Image.open(camera_file).convert("RGB")
@@ -231,7 +222,7 @@ with tab_main2:
         if file_input:
             uploaded_image = Image.open(file_input).convert("RGB")
 
-# --- 5. 検索結果表示 ---
+# --- 6. 検索結果表示 ---
 if uploaded_image:
     st.divider()
     col_img, col_info = st.columns([1, 2])
