@@ -74,18 +74,36 @@ def search_similar(query_vector, top_k=12):
     results.sort(key=lambda x: x["similarity"], reverse=True)
     return results[:top_k]
 
-# テキスト（型番・キーワード）検索
+# テキスト（型番・キーワード）検索（スペース区切りのAND検索対応）
 def search_by_keyword(keyword, top_k=30):
     conn = sqlite3.connect("rk_data.db")
     c = conn.cursor()
-    search_query = f"%{keyword}%"
-    c.execute("""
+    
+    # 全角スペースを半角スペースに統一して分解
+    keywords = keyword.replace(" ", " ").split()
+    if not keywords:
+        conn.close()
+        return []
+
+    # 入力されたすべての単語が含まれる条件（AND検索）を動的生成
+    where_clauses = []
+    params = []
+    for kw in keywords:
+        where_clauses.append("(title LIKE ? OR model LIKE ?)")
+        search_pattern = f"%{kw}%"
+        params.extend([search_pattern, search_pattern])
+        
+    where_sql = " AND ".join(where_clauses)
+    query = f"""
         SELECT title, model, price, img_url, date 
         FROM items 
-        WHERE title LIKE ? OR model LIKE ?
+        WHERE {where_sql}
         ORDER BY id DESC
         LIMIT ?
-    """, (search_query, search_query, top_k))
+    """
+    params.append(top_k)
+    
+    c.execute(query, params)
     rows = c.fetchall()
     conn.close()
 
