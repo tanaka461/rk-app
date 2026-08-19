@@ -4,6 +4,10 @@ import numpy as np
 import torch
 from transformers import CLIPProcessor, CLIPModel
 from PIL import Image
+import io
+import base64
+import os
+import streamlit.components.v1 as components
 
 # --- 1. ページ設定 & CSSによる翻訳の完全拒否 ---
 st.set_page_config(page_title="相場検索アプリ", layout="wide")
@@ -19,7 +23,135 @@ st.markdown("""
 
 st.title("👜 相場検索アプリ")
 
-# --- 2. AIモデル (遅延ロード対応) & DB設定 ---
+# --- 2. 画面内カメラコンポーネント定義 ---
+CAM_DIR = "custom_camera_component"
+os.makedirs(CAM_DIR, exist_ok=True)
+index_path = os.path.join(CAM_DIR, "index.html")
+
+html_code = """<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/streamlit-component-lib@1.4.0/dist/streamlit-component-lib.js"></script>
+<style>
+    body { margin: 0; padding: 0; background: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .cam-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #1a1a1a;
+        border-radius: 16px;
+        padding: 12px;
+        box-sizing: border-box;
+    }
+    video {
+        width: 100%;
+        height: 380px;
+        object-fit: cover;
+        border-radius: 12px;
+        background-color: #000;
+    }
+    .controls {
+        margin-top: 12px;
+        margin-bottom: 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .shutter-btn {
+        width: 68px;
+        height: 68px;
+        background-color: #ff3b30;
+        border: 4px solid #ffffff;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        cursor: pointer;
+        outline: none;
+        transition: transform 0.1s;
+    }
+    .shutter-btn:active {
+        transform: scale(0.92);
+        background-color: #d70015;
+    }
+    .btn-label {
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        margin-top: 8px;
+    }
+</style>
+</head>
+<body>
+<div class="cam-container">
+    <video id="webcam" autoplay playsinline muted></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <div class="controls">
+        <button class="shutter-btn" id="snap-btn" onclick="takePhoto()"></button>
+        <div class="btn-label" id="btn-label">タップして撮影＆検索</div>
+    </div>
+</div>
+
+<script>
+    const video = document.getElementById('webcam');
+    const canvas = document.getElementById('canvas');
+
+    if (window.Streamlit) {
+        window.Streamlit.setComponentReady();
+        window.Streamlit.setFrameHeight(500);
+    }
+
+    navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { exact: "environment" } },
+        audio: false
+    }).catch(function(err) {
+        return navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "environment" },
+            audio: false
+        });
+    }).catch(function(err) {
+        return navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false
+        });
+    }).then(function(stream) {
+        video.srcObject = stream;
+    }).catch(function(err) {
+        console.error("Camera access error:", err);
+    });
+
+    function takePhoto() {
+        document.getElementById('btn-label').innerText = "解析を開始中...";
+        
+        // データを極限まで軽量化（400px幅、圧縮率0.55）して通信詰まりを防止
+        const targetWidth = 400;
+        const aspect = (video.videoHeight || 480) / (video.videoWidth || 640);
+        
+        canvas.width = targetWidth;
+        canvas.height = Math.round(targetWidth * aspect);
+        
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.55);
+        
+        if (window.Streamlit) {
+            window.Streamlit.setComponentValue(dataUrl);
+        }
+    }
+</script>
+</body>
+</html>
+"""
+
+with open(index_path, "w", encoding="utf-8") as f:
+    f.write(html_code)
+
+app_camera = components.declare_component("app_camera", path=CAM_DIR)
+
+# --- 3. AIモデル & DB設定 ---
 @st.cache_resource
 def load_model():
     MODEL_NAME = "openai/clip-vit-base-patch16"
@@ -71,7 +203,7 @@ def search_similar(query_vector, top_k=12):
     results.sort(key=lambda x: x["similarity"], reverse=True)
     return results[:top_k]
 
-# テキスト（型番・キーワード）検索（AND検索 & 表示50件）
+# テキスト検索
 def search_by_keyword(keyword, top_k=50):
     conn = sqlite3.connect("rk_data.db")
     c = conn.cursor()
@@ -114,7 +246,7 @@ def search_by_keyword(keyword, top_k=50):
         })
     return results
 
-# --- 3. タブUI構成 ---
+# --- 4. タブUI構成 ---
 tab_main1, tab_main2 = st.tabs(["🔍 型番・キーワード検索", "📷 画像で検索"])
 
 uploaded_image = None
@@ -124,23 +256,37 @@ with tab_main1:
     search_keyword = st.text_input("商品名や型番を入力 (例: バーキン トゴ, M43735)", "", key="kw_input")
 
 with tab_main2:
-    st.write("画像を撮影またはライブラリから選択してください")
-    image_file = st.file_uploader(
-        "カメラを起動して撮影 / 画像を選択", 
-        type=["jpg", "jpeg", "png", "webp"],
-        key="image_uploader"
-    )
-    if image_file:
-        uploaded_image = Image.open(image_file).convert("RGB")
+    sub_tab1, sub_tab2 = st.tabs(["📸 アプリ内で撮影して検索", "📁 画像をアップロード"])
+    
+    with sub_tab1:
+        st.caption("背面カメラ映像が画面に表示されます。撮影ボタンを押すと即座に解析が始まります。")
+        camera_data = app_camera(key="app_camera_component")
+        
+        if camera_data and isinstance(camera_data, str) and "data:image" in camera_data:
+            try:
+                base64_str = camera_data.split("base64,")[1].strip()
+                missing_padding = len(base64_str) % 4
+                if missing_padding:
+                    base64_str += '=' * (4 - missing_padding)
 
-# --- 4. 検索結果表示 ---
+                img_data = base64.b64decode(base64_str)
+                uploaded_image = Image.open(io.BytesIO(img_data)).convert("RGB")
+            except Exception:
+                st.error("画像の受信に失敗しました。もう一度撮影してください。")
+
+    with sub_tab2:
+        file_input = st.file_uploader("画像ファイルを選択してください", type=["jpg", "jpeg", "png", "webp"])
+        if file_input:
+            uploaded_image = Image.open(file_input).convert("RGB")
+
+# --- 5. 検索結果表示 ---
 if uploaded_image:
     st.divider()
     col_img, col_info = st.columns([1, 2])
     with col_img:
-        st.image(uploaded_image, caption="検索画像", use_container_width=True)
+        st.image(uploaded_image, caption="撮影／選択画像", use_container_width=True)
     with col_info:
-        st.info("AIモデルを準備して画像を解析中...")
+        st.info("AIモデルで特徴量を抽出して検索中...")
 
     query_vec = get_image_features(uploaded_image)
     results = search_similar(query_vec, top_k=12)
