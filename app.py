@@ -4,9 +4,6 @@ import numpy as np
 import torch
 from transformers import CLIPProcessor, CLIPModel
 from PIL import Image
-import io
-import base64
-import streamlit.components.v1 as components
 
 # --- 1. ページ設定 & CSSによる翻訳の完全拒否 ---
 st.set_page_config(page_title="相場検索アプリ", layout="wide")
@@ -74,8 +71,8 @@ def search_similar(query_vector, top_k=12):
     results.sort(key=lambda x: x["similarity"], reverse=True)
     return results[:top_k]
 
-# テキスト（型番・キーワード）検索（複数ワードAND検索 & 表示数50件拡張）
-def search_by_keyword(keyword, top_k=30):
+# テキスト（型番・キーワード）検索（AND検索 & 表示50件）
+def search_by_keyword(keyword, top_k=50):
     conn = sqlite3.connect("rk_data.db")
     c = conn.cursor()
     
@@ -131,79 +128,10 @@ with tab_main2:
     
     with sub_tab1:
         st.write("カメラで商品を撮影してください")
-        
-        # 安定したデータ送信ロジックに修正したカメラHTML/JS
-        camera_html = """
-        <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
-            <video id="webcam" autoplay playsinline style="width: 100%; max-width: 600px; height: auto; border-radius: 12px; border: 3px solid #4A90E2; background-color: #000;"></video>
-            <canvas id="canvas" style="display:none;"></canvas>
-            <br>
-            <button id="snap-btn" onclick="takePhoto()" style="
-                width: 70px;
-                height: 70px;
-                background-color: #ff4b4b;
-                border: 4px solid #ffffff;
-                border-radius: 50%;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-                cursor: pointer;
-                outline: none;
-                transition: transform 0.1s;
-            " onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'"></button>
-            <p style="margin-top: 8px; font-size: 13px; color: #666; font-weight: bold;">タップして撮影</p>
-        </div>
-
-        <script>
-            const video = document.getElementById('webcam');
-            const canvas = document.getElementById('canvas');
-            
-            navigator.mediaDevices.getUserMedia({
-                video: { facingMode: { exact: "environment" } },
-                audio: false
-            }).catch(function(err) {
-                return navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "environment" },
-                    audio: false
-                });
-            }).then(function(stream) {
-                video.srcObject = stream;
-            }).catch(function(err) {
-                console.error("Camera error:", err);
-            });
-
-            function takePhoto() {
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                const context = canvas.getContext('2d');
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
-                // JPEGデータURLを取得して親フレームへ確実に送信
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-                
-                if (window.Streamlit) {
-                    window.Streamlit.setComponentValue(dataUrl);
-                } else {
-                    window.parent.postMessage({
-                        type: 'streamlit:setComponentValue',
-                        value: dataUrl
-                    }, '*');
-                }
-            }
-        </script>
-        """
-        camera_data = components.html(camera_html, height=520)
-        
-        if camera_data:
-            try:
-                # 送信データのプレフィックス判定を強化
-                if "," in str(camera_data):
-                    base64_str = camera_data.split(',')[1]
-                else:
-                    base64_str = camera_data
-                
-                img_data = base64.b64decode(base64_str)
-                uploaded_image = Image.open(io.BytesIO(img_data)).convert("RGB")
-            except Exception as e:
-                st.error("画像の読み込みに失敗しました。もう一度シャッターを押してください。")
+        # Streamlit公式の標準カメラコンポーネント（確実に動作・失敗しない）
+        camera_file = st.camera_input("写真を撮影")
+        if camera_file:
+            uploaded_image = Image.open(camera_file).convert("RGB")
 
     with sub_tab2:
         file_input = st.file_uploader("画像ファイルを選択してください", type=["jpg", "jpeg", "png", "webp"])
