@@ -132,11 +132,14 @@ with tab_main2:
     with sub_tab1:
         st.write("背面カメラで商品を撮影してください")
         
+        # 通信ライブラリ(streamlit-component-lib)組み込み済みのカメラHTML
         camera_html = """
         <!DOCTYPE html>
         <html>
         <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Streamlitコンポーネント通信ライブラリ -->
+        <script src="https://cdn.jsdelivr.net/npm/streamlit-component-lib@1.4.0/dist/streamlit-component-lib.js"></script>
         <style>
             .cam-container {
                 display: flex;
@@ -189,17 +192,22 @@ with tab_main2:
         </head>
         <body>
         <div class="cam-container">
-            <video id="webcam" autoplay playsinline></video>
+            <video id="webcam" autoplay playsinline muted></video>
             <canvas id="canvas" style="display:none;"></canvas>
             <div class="controls">
                 <button class="shutter-btn" id="snap-btn" onclick="takePhoto()"></button>
-                <div class="btn-label">タップして撮影</div>
+                <div class="btn-label" id="btn-label">タップして撮影</div>
             </div>
         </div>
 
         <script>
             const video = document.getElementById('webcam');
             const canvas = document.getElementById('canvas');
+
+            // Streamlitの準備完了を通知
+            if (window.Streamlit) {
+                window.Streamlit.setComponentReady();
+            }
 
             navigator.mediaDevices.getUserMedia({
                 video: { facingMode: { exact: "environment" } },
@@ -221,6 +229,9 @@ with tab_main2:
             });
 
             function takePhoto() {
+                const label = document.getElementById('btn-label');
+                label.innerText = '解析中...';
+                
                 const targetWidth = 600;
                 const aspect = (video.videoHeight || 480) / (video.videoWidth || 640);
                 
@@ -232,10 +243,10 @@ with tab_main2:
                 
                 const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
                 
-                window.parent.postMessage({
-                    type: 'streamlit:setComponentValue',
-                    value: dataUrl
-                }, '*');
+                // Streamlitに撮影データを直接送信
+                if (window.Streamlit) {
+                    window.Streamlit.setComponentValue(dataUrl);
+                }
             }
         </script>
         </body>
@@ -243,7 +254,6 @@ with tab_main2:
         """
         camera_data = components.html(camera_html, height=580)
         
-        # 判定を修正：シャッターを押して有効な文字列が入ってきた時だけデコードを実行する
         if camera_data and isinstance(camera_data, str) and len(camera_data) > 100:
             try:
                 raw_str = camera_data
