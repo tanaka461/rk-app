@@ -1,5 +1,6 @@
-from io import BytesIO
 import sqlite3
+import unicodedata
+from io import BytesIO
 import numpy as np
 from PIL import Image
 import streamlit as st
@@ -115,6 +116,14 @@ st.markdown(
 st.title("👜 相場検索アプリ")
 
 
+# --- 表記表記揺れ対策（半角カナ→全角カナ変換） ---
+def normalize_text(text):
+    if not text:
+        return ""
+    # NFKC正規化により、半角カナや濁点・半濁点を全角カナに統一
+    return unicodedata.normalize("NFKC", str(text)).lower()
+
+
 # --- 4. AIモデル & DB設定 ---
 @st.cache_resource
 def load_model():
@@ -156,7 +165,6 @@ def search_similar(query_vector, target_market="すべて", top_k=100):
         item_id, title, model_num, price, img_url, vec_bytes, date_str = row
         date_str = str(date_str or "")
 
-        # 市場フィルター
         if target_market == "GTのみ" and "GT" not in date_str:
             continue
         elif target_market == "RKのみ" and "GT" in date_str:
@@ -184,56 +192,58 @@ def search_similar(query_vector, target_market="すべて", top_k=100):
     return results[:top_k]
 
 
-def search_by_keyword(keyword, target_market="すべて", top_k=100):
+def search_by_keyword(keyword, target_market="すべて", top_k=200):
     conn = sqlite3.connect("rk_data.db")
     c = conn.cursor()
 
-    keywords = keyword.replace(" ", " ").split()
-
-    where_clauses = []
-    params = []
-
-    for kw in keywords:
-        where_clauses.append("(title LIKE ? OR model LIKE ? OR date LIKE ?)")
-        search_pattern = f"%{kw}%"
-        params.extend([search_pattern, search_pattern, search_pattern])
-
-    # 市場絞り込み条件の追加
-    if target_market == "GTのみ":
-        where_clauses.append("date LIKE '%GT%'")
-    elif target_market == "RKのみ":
-        where_clauses.append("date NOT LIKE '%GT%'")
-
-    where_sql = (
-        " WHERE " + " AND ".join(where_clauses) if where_clauses else ""
-    )
-
-    query = f"""
-        SELECT title, model, price, img_url, date 
-        FROM items 
-        {where_sql}
-        ORDER BY id DESC
-        LIMIT ?
-    """
-    params.append(top_k)
-
-    c.execute(query, params)
+    c.execute("SELECT title, model, price, img_url, date FROM items")
     rows = c.fetchall()
     conn.close()
+
+    # 検索キーワードを正規化（全角化・小文字化）
+    norm_keyword = normalize_text(keyword)
+    keywords = norm_keyword.replace(" ", " ").split()
 
     results = []
     for row in rows:
         title, model_num, price, img_url, date_str = row
-        results.append(
-            {
-                "title": title,
-                "model": model_num,
-                "price": price,
-                "img_url": img_url,
-                "date": str(date_str or ""),
-            }
-        )
-    return results
+        date_str = str(date_str or "")
+
+        # 市場絞り込み
+        if target_market == "GTのみ" and "GT" not in date_str:
+            continue
+        elif target_market == "RKのみ" and "GT" in date_str:
+            continue
+
+        # DB内のデータも正規化（全角化）して比較
+        norm_title = normalize_text(title)
+        norm_model = normalize_text(model_num)
+        norm_date = normalize_text(date_str)
+
+        # キーワードのアンド検索判定
+        match = True
+        if keywords:
+            for kw in keywords:
+                if (
+                    (kw not in norm_title)
+                    and (kw not in norm_model)
+                    and (kw not in norm_date)
+                ):
+                    match = False
+                    break
+
+        if match:
+            results.append(
+                {
+                    "title": title,
+                    "model": model_num,
+                    "price": price,
+                    "img_url": img_url,
+                    "date": date_str,
+                }
+            )
+
+    return results[:top_k]
 
 
 def sort_results(results, sort_option):
@@ -260,7 +270,9 @@ with tab_main1:
     col_input, col_market = st.columns([3, 1])
     with col_input:
         search_keyword = st.text_input(
-            "商品名や型番を入力 (例: バーキン, M43735)", "", key="kw_input"
+            "商品名や型番を入力 (例: バーキン, ソミュール, M43735)",
+            "",
+            key="kw_input",
         )
     with col_market:
         market_filter = st.selectbox(
@@ -274,7 +286,7 @@ with tab_main1:
     ) or market_filter == "GTのみ":
         st.divider()
         kw_results = search_by_keyword(
-            search_keyword.strip(), target_market=market_filter, top_k=100
+            search_keyword.strip(), target_market=market_filter, top_k=200
         )
 
         col_title, col_sort = st.columns([2, 1])
@@ -305,7 +317,6 @@ with tab_main1:
                         st.caption(f"型番: {item['model']}")
                     st.subheader(f"¥{item['price']:,}")
 
-                    # 表示ラベル切り分け
                     d_str = item["date"]
                     if "GT" in d_str:
                         st.caption(f"🏛️ **GT** ｜ 📅 2026-08-15")
