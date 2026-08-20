@@ -126,7 +126,7 @@ def get_image_features(image):
     feats = feats / torch.norm(feats, p=2, dim=-1, keepdim=True)
     return feats.numpy().flatten()
 
-def search_similar(query_vector, top_k=12):
+def search_similar(query_vector, top_k=50):
     conn = sqlite3.connect("rk_data.db")
     c = conn.cursor()
     c.execute("SELECT id, title, model, price, img_url, vector, date FROM items")
@@ -155,7 +155,7 @@ def search_similar(query_vector, top_k=12):
     results.sort(key=lambda x: x["similarity"], reverse=True)
     return results[:top_k]
 
-def search_by_keyword(keyword, top_k=30):
+def search_by_keyword(keyword, top_k=50):
     conn = sqlite3.connect("rk_data.db")
     c = conn.cursor()
     
@@ -176,7 +176,6 @@ def search_by_keyword(keyword, top_k=30):
         SELECT title, model, price, img_url, date 
         FROM items 
         WHERE {where_sql}
-        ORDER BY id DESC
         LIMIT ?
     """
     params.append(top_k)
@@ -197,6 +196,18 @@ def search_by_keyword(keyword, top_k=30):
         })
     return results
 
+# ソート処理関数
+def sort_results(results, sort_option):
+    if sort_option == "📅 日付が新しい順":
+        return sorted(results, key=lambda x: str(x.get("date", "")), reverse=True)
+    elif sort_option == "💴 価格が高い順":
+        return sorted(results, key=lambda x: x.get("price", 0), reverse=True)
+    elif sort_option == "💴 価格が安い順":
+        return sorted(results, key=lambda x: x.get("price", 0))
+    elif sort_option == "🎯 類似度が高い順":
+        return sorted(results, key=lambda x: x.get("similarity", 0), reverse=True)
+    return results
+
 # --- 5. タブUI構成 & 各タブ内独立検索処理 ---
 tab_main1, tab_main2 = st.tabs(["🔍 型番・キーワード検索", "📷 画像で検索"])
 
@@ -207,7 +218,18 @@ with tab_main1:
     if search_keyword and search_keyword.strip():
         st.divider()
         kw_results = search_by_keyword(search_keyword.strip(), top_k=50)
-        st.subheader(f"🔍 「{search_keyword.strip()}」の検索結果 ({len(kw_results)} 件)")
+        
+        col_title, col_sort = st.columns([2, 1])
+        with col_title:
+            st.subheader(f"🔍 「{search_keyword.strip()}」の検索結果 ({len(kw_results)} 件)")
+        with col_sort:
+            sort_order = st.selectbox(
+                "並び替え",
+                ["📅 日付が新しい順", "💴 価格が高い順", "💴 価格が安い順"],
+                key="kw_sort"
+            )
+
+        kw_results = sort_results(kw_results, sort_order)
 
         if not kw_results:
             st.warning("一致する商品が見つかりませんでした。別のキーワードでお試しください。")
@@ -247,9 +269,20 @@ with tab_main2:
             st.info("AIモデルで特徴量を抽出して検索中...")
 
         query_vec = get_image_features(uploaded_image)
-        results = search_similar(query_vec, top_k=12)
+        results = search_similar(query_vec, top_k=50)
 
-        st.subheader("🎉 AI類似検索結果（上位12件）")
+        col_title, col_sort = st.columns([2, 1])
+        with col_title:
+            st.subheader("🎉 AI類似検索結果")
+        with col_sort:
+            img_sort_order = st.selectbox(
+                "並び替え",
+                ["🎯 類似度が高い順", "📅 日付が新しい順", "💴 価格が高い順", "💴 価格が安い順"],
+                key="img_sort"
+            )
+
+        results = sort_results(results, img_sort_order)[:12]
+
         if not results:
             st.warning("該当するデータが見つかりませんでした。")
         else:
