@@ -1,0 +1,2216 @@
+<html lang="ja" style="height: auto; min-height: 100%;"><head>
+        <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <!-- robots -->
+    <meta name="robots" content="noindex,nofollow">
+    <title>GTオークション | 入札一覧</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="https://member.gt-auc.jp/vendor/AdminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css?v=1615094745">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://member.gt-auc.jp/vendor/AdminLTE/bower_components/font-awesome/css/font-awesome.min.css?v=1615094784">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://member.gt-auc.jp/vendor/AdminLTE/bower_components/Ionicons/css/ionicons.min.css?v=1615094719">
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="https://member.gt-auc.jp/vendor/AdminLTE/bower_components/bootstrap-daterangepicker/daterangepicker.css?v=1615094744">
+    <!-- bootstrap datepicker -->
+    <link rel="stylesheet" href="https://member.gt-auc.jp/vendor/AdminLTE/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css?v=1615094741">
+    <!-- iCheck for checkboxes and radio inputs -->
+    <link rel="stylesheet" href="https://member.gt-auc.jp/vendor/AdminLTE/plugins/iCheck/all.css?v=1615094804">
+    <!-- Bootstrap Color Picker -->
+    <link rel="stylesheet" href="https://member.gt-auc.jp/vendor/AdminLTE/bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css?v=1615094740">
+    <!-- Bootstrap time Picker -->
+    <link rel="stylesheet" href="https://member.gt-auc.jp/vendor/AdminLTE/plugins/timepicker/bootstrap-timepicker.min.css?v=1615094806">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="https://member.gt-auc.jp/vendor/AdminLTE/bower_components/select2/dist/css/select2.min.css?v=1615094800">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="https://member.gt-auc.jp/vendor/AdminLTE/dist/css/AdminLTE.min.css?v=1615094803">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+        folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="/vendor/AdminLTE/dist/css/skins/_all-skins.min.css">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://member.gt-auc.jp/vendor/AdminLTE/plugins/sweetalert2/sweetalert2.min.css?v=1620343793">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://member.gt-auc.jp/js/common/html5shiv.min.js?v=1630828704"></script>
+    <script src="https://member.gt-auc.jp/js/common/respond.min.js?v=1630828704"></script>
+    <![endif]-->
+
+    <!-- 郵便番号 住所入力保管 -->
+    <script src="https://member.gt-auc.jp/js/common/yubinbango.js?v=1630828704"></script>
+
+    <script>
+        function formSwitch() {   
+            document.getElementById('yu_kouza_shubetsu1').checked = false;
+            document.getElementById('yu_kouza_shubetsu2').checked = false;
+            document.getElementById('yu_sougou_kigou').value = null;
+            document.getElementById('yu_sougou_bangou').value = null;
+            document.getElementById('yu_furikae_kigou').value = null;
+            document.getElementById('yu_furikae_suuji').value = null;
+            document.getElementById('yu_furikae_bangou').value = null;
+            document.getElementById('yu_kouza_meigi_1').value = null;
+            document.getElementById('yu_kouza_meigi_2').value = null;
+            document.getElementById('displayblock1').style.display = 'block';
+            document.getElementById('displayblock2').style.display = 'none';
+            document.getElementById('displayblock3').style.display = 'none';
+            document.getElementById('displayblock4').style.display = 'none';
+        }
+        function formSwitch2() {
+            document.getElementById('kouza_shubetsu1').checked = false;
+            document.getElementById('kouza_shubetsu2').checked = false;
+            document.getElementById('kinyuukikan_mei').value = null;
+            document.getElementById('shiten_mei').value = null;
+            document.getElementById('kouza_bangou').value = null;
+            document.getElementById('kouza_meigi').value = null;
+            document.getElementById('displayblock1').style.display = 'none';
+            document.getElementById('displayblock2').style.display = 'block';
+        }
+        function formSwitch3() {     
+            document.getElementById('yu_furikae_kigou').value = null;
+            document.getElementById('yu_furikae_suuji').value = null;
+            document.getElementById('yu_furikae_bangou').value = null;
+            document.getElementById('yu_kouza_meigi_2').value = null;
+            document.getElementById('displayblock3').style.display = 'block';
+            document.getElementById('displayblock4').style.display = 'none';
+        }
+        function formSwitch4() {
+            document.getElementById('yu_sougou_kigou').value = null;
+            document.getElementById('yu_sougou_bangou').value = null;
+            document.getElementById('yu_kouza_meigi_1').value = null;
+            document.getElementById('displayblock3').style.display = 'none';
+            document.getElementById('displayblock4').style.display = 'block';
+        }
+    </script>
+
+    <!-- Google Font -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
+    <link rel="stylesheet" href="https://member.gt-auc.jp/css/common/common.css?v=1648515895">
+            <link rel="stylesheet" href="https://member.gt-auc.jp/css/auction/nyuusatsu/common.css?v=1754270307">
+    <link rel="stylesheet" href="https://member.gt-auc.jp/css/common/for_small_screen.css?v=1648515895">
+</head>
+
+<body class="skin-red-light sidebar-mini" style="height: auto; min-height: 100%;">
+    <div class="wrapper" style="height: auto; min-height: 100%;">
+            <header class="main-header">
+        <a href="https://member.gt-auc.jp" class="logo">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <span class="logo-mini">GT</span>
+            <!-- logo for regular state and mobile devices -->
+            <span class="logo-lg">GTオークション</span>
+        </a>
+        <nav class="navbar navbar-static-top">
+            <!-- Sidebar toggle button-->
+            <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+                    <form method="POST" action="https://member.gt-auc.jp/logout" accept-charset="UTF-8" name="form_logout" autocomplete="off"><input name="_token" type="hidden" value="WXTkqnJqtfgcoVSQUTtG1OjgcbHjoIOAiFHZ1du2">
+                    </form>
+                    <li class="dropdown user user-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img src="https://member.gt-auc.jp/images/dummy_user.png?v=1618472378" class="user-image" alt="User Image">
+                            <span class="hidden-xs">株式会社デュナミス 様</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- User image -->
+                            <li class="user-header">
+                                <img src="https://member.gt-auc.jp/images/dummy_user.png?v=1618472378" class="img-circle" alt="User Image">
+                                <p>株式会社デュナミス 様</p>
+                            </li>
+                            <!-- Menu Footer-->
+                            <li class="user-footer">
+                                <div class="pull-left">
+                                    <a href="https://member.gt-auc.jp/kaiin/show" class="btn btn-default btn-flat">会員情報</a>
+                                </div>
+                                <div class="pull-right">
+                                    <a href="javascript:form_logout.submit()" class="btn btn-default btn-flat">ログアウト</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <aside class="main-sidebar">
+        <section class="sidebar" style="height: auto;">
+            <div class="user-panel">
+                <div class="admin-panel">
+                    <img src="https://member.gt-auc.jp/images/logo.png?v=1618896463" alt="GTオークション">
+                </div>
+            </div>
+            <ul class="sidebar-menu tree" data-widget="tree">
+                <li>
+                    <a href="https://member.gt-auc.jp/home"><i class="fa fa-home"></i> <span>ホーム</span></a>
+                </li>
+                <li class="treeview menu-open" style="height: auto;">
+                    <a href="#">
+                        <i class="fa fa-gavel"></i> <span>オークション</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: block;">
+                        <li class="">
+                            <a href="https://member.gt-auc.jp/auctionshuppin/list"><i class="fa fa-fw fa-archive"></i> <span>出品</span></a>
+                        </li>
+                        <li class="">
+                            <a href="https://member.gt-auc.jp/auctionnyuusatsu/list"><i class="fa fa-fw fa-shopping-cart"></i> <span>入札</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="https://member.gt-auc.jp/kaiin/show"><i class="fa fa-user"></i> <span>会員情報</span></a>
+                </li>
+            </ul>
+            <!-- <ul class="sidebar-menu" data-widget="tree">
+                <li class="treeview menu-open" style="height: auto;">
+                    <ul class="treeview-menu" style="display: block;">
+                        <li class="">
+                            <a href="https://member.gt-auc.jp/home">
+                                <i class="fa fa-home"></i> ホーム</a>
+                        </li>
+                    </ul>
+                    <ul class="treeview-menu" style="display: block;">
+                        <li class="">
+                            <a href="https://member.gt-auc.jp/auction/list">
+                                <i class="fa fa-gavel"></i> オークション</a>
+                        </li>
+                    </ul>
+                    <ul class="treeview-menu" style="display: block;">
+                        <li class="">
+                            <a href="https://member.gt-auc.jp/kaiin/show">
+                                <i class="fa fa-user"></i> 会員情報</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul> -->
+        </section>
+    </aside>
+
+        <div class="content-wrapper" style="min-height: 664.333px;">
+            <section class="content-header">
+    <h1>入札<small>一覧</small></h1>
+</section>
+<section class="content">
+    
+
+    <form method="GET" action="https://member.gt-auc.jp/auction/nyuusatsu/list/940" accept-charset="UTF-8" id="search_form" autocomplete="off">
+        <div class="box box-danger">
+                        <input name="auction_schedule_id" type="hidden" value="940">
+            <input name="max_disp" type="hidden" value="0">
+            <div class="box-header with-border">
+                <h3 class="box-title">検索条件</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                </div>
+            </div>
+            <div class="box-body">
+                <div class="nyuusatsu_search for_bag">
+    
+    <div class="select2_wrap">
+        <div class="form-group">
+            <label>正式箱番</label>
+            <select class="form-control attachCancelToSelect2 select2-hidden-accessible" style="width: 100%;" name="seisiki_hakoban" data-select2-id="1" tabindex="-1" aria-hidden="true"><option value="" selected="selected" data-select2-id="3"></option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option><option value="32">32</option><option value="33">33</option><option value="34">34</option><option value="35">35</option><option value="36">36</option><option value="37">37</option><option value="38">38</option><option value="39">39</option><option value="40">40</option><option value="41">41</option><option value="42">42</option><option value="43">43</option><option value="44">44</option><option value="45">45</option><option value="46">46</option><option value="47">47</option><option value="48">48</option><option value="49">49</option><option value="50">50</option><option value="51">51</option><option value="52">52</option><option value="53">53</option><option value="54">54</option><option value="55">55</option><option value="56">56</option><option value="57">57</option><option value="58">58</option><option value="59">59</option><option value="60">60</option><option value="61">61</option><option value="62">62</option><option value="63">63</option><option value="64">64</option><option value="65">65</option><option value="66">66</option><option value="67">67</option><option value="68">68</option><option value="69">69</option><option value="70">70</option><option value="71">71</option><option value="72">72</option><option value="73">73</option><option value="74">74</option><option value="75">75</option><option value="76">76</option><option value="77">77</option><option value="78">78</option><option value="79">79</option><option value="80">80</option><option value="81">81</option><option value="82">82</option><option value="83">83</option><option value="84">84</option><option value="85">85</option><option value="86">86</option><option value="87">87</option><option value="88">88</option><option value="89">89</option><option value="90">90</option><option value="91">91</option><option value="92">92</option><option value="93">93</option><option value="94">94</option><option value="95">95</option><option value="96">96</option><option value="97">97</option><option value="98">98</option><option value="99">99</option><option value="100">100</option><option value="101">101</option><option value="102">102</option><option value="103">103</option><option value="104">104</option><option value="105">105</option><option value="106">106</option><option value="107">107</option><option value="108">108</option><option value="109">109</option><option value="110">110</option><option value="111">111</option><option value="112">112</option><option value="113">113</option><option value="114">114</option><option value="115">115</option><option value="116">116</option><option value="117">117</option><option value="118">118</option><option value="119">119</option><option value="120">120</option><option value="121">121</option><option value="122">122</option><option value="123">123</option><option value="124">124</option><option value="125">125</option><option value="126">126</option><option value="127">127</option><option value="128">128</option><option value="129">129</option><option value="130">130</option><option value="131">131</option><option value="132">132</option><option value="133">133</option><option value="134">134</option><option value="135">135</option><option value="136">136</option><option value="137">137</option><option value="138">138</option><option value="139">139</option><option value="140">140</option><option value="141">141</option><option value="142">142</option><option value="143">143</option><option value="144">144</option><option value="145">145</option><option value="146">146</option><option value="147">147</option><option value="148">148</option><option value="149">149</option><option value="150">150</option><option value="151">151</option><option value="152">152</option><option value="153">153</option><option value="154">154</option><option value="155">155</option><option value="156">156</option><option value="157">157</option><option value="158">158</option><option value="159">159</option><option value="160">160</option><option value="161">161</option><option value="162">162</option><option value="163">163</option><option value="164">164</option><option value="165">165</option><option value="166">166</option><option value="167">167</option><option value="168">168</option><option value="169">169</option><option value="170">170</option><option value="171">171</option><option value="172">172</option><option value="173">173</option><option value="174">174</option><option value="175">175</option><option value="176">176</option><option value="177">177</option><option value="178">178</option><option value="179">179</option><option value="180">180</option><option value="181">181</option><option value="182">182</option><option value="183">183</option><option value="184">184</option><option value="185">185</option><option value="186">186</option><option value="187">187</option><option value="188">188</option><option value="189">189</option><option value="190">190</option><option value="191">191</option><option value="192">192</option><option value="193">193</option><option value="194">194</option><option value="195">195</option><option value="196">196</option><option value="197">197</option><option value="198">198</option><option value="199">199</option><option value="200">200</option><option value="201">201</option><option value="202">202</option><option value="203">203</option><option value="204">204</option><option value="205">205</option><option value="206">206</option><option value="207">207</option><option value="208">208</option><option value="209">209</option><option value="210">210</option><option value="211">211</option><option value="212">212</option><option value="213">213</option><option value="214">214</option><option value="215">215</option><option value="216">216</option><option value="217">217</option><option value="218">218</option><option value="219">219</option><option value="220">220</option><option value="221">221</option><option value="222">222</option><option value="223">223</option><option value="224">224</option><option value="225">225</option><option value="226">226</option><option value="227">227</option><option value="228">228</option><option value="229">229</option><option value="230">230</option><option value="231">231</option><option value="232">232</option><option value="233">233</option><option value="234">234</option><option value="235">235</option><option value="236">236</option><option value="237">237</option><option value="238">238</option><option value="239">239</option><option value="240">240</option><option value="241">241</option><option value="242">242</option><option value="243">243</option><option value="244">244</option><option value="245">245</option><option value="246">246</option><option value="247">247</option><option value="248">248</option><option value="249">249</option><option value="250">250</option><option value="251">251</option><option value="252">252</option><option value="253">253</option><option value="254">254</option><option value="255">255</option><option value="256">256</option><option value="257">257</option><option value="258">258</option><option value="259">259</option><option value="260">260</option><option value="261">261</option><option value="262">262</option><option value="263">263</option><option value="264">264</option><option value="265">265</option><option value="266">266</option><option value="267">267</option><option value="268">268</option><option value="269">269</option><option value="270">270</option><option value="271">271</option><option value="272">272</option><option value="273">273</option><option value="274">274</option><option value="275">275</option><option value="276">276</option><option value="277">277</option><option value="278">278</option><option value="279">279</option><option value="280">280</option><option value="281">281</option><option value="282">282</option><option value="283">283</option><option value="284">284</option><option value="285">285</option><option value="286">286</option><option value="287">287</option><option value="288">288</option><option value="289">289</option><option value="290">290</option><option value="291">291</option><option value="292">292</option><option value="293">293</option><option value="294">294</option><option value="295">295</option><option value="296">296</option><option value="297">297</option><option value="298">298</option><option value="299">299</option><option value="300">300</option><option value="301">301</option><option value="302">302</option><option value="303">303</option><option value="304">304</option><option value="305">305</option><option value="306">306</option><option value="307">307</option><option value="308">308</option><option value="309">309</option><option value="310">310</option><option value="311">311</option><option value="312">312</option><option value="313">313</option><option value="314">314</option><option value="315">315</option><option value="316">316</option><option value="317">317</option><option value="318">318</option><option value="319">319</option><option value="320">320</option><option value="321">321</option><option value="322">322</option><option value="323">323</option><option value="324">324</option><option value="325">325</option><option value="326">326</option><option value="327">327</option><option value="328">328</option><option value="329">329</option><option value="330">330</option><option value="331">331</option><option value="332">332</option><option value="333">333</option><option value="334">334</option><option value="335">335</option><option value="336">336</option><option value="337">337</option><option value="338">338</option><option value="339">339</option><option value="340">340</option><option value="341">341</option><option value="342">342</option><option value="343">343</option><option value="344">344</option><option value="345">345</option><option value="346">346</option><option value="347">347</option><option value="348">348</option><option value="349">349</option><option value="350">350</option><option value="351">351</option><option value="352">352</option><option value="353">353</option><option value="354">354</option><option value="355">355</option><option value="356">356</option><option value="357">357</option><option value="358">358</option><option value="359">359</option><option value="360">360</option><option value="361">361</option><option value="362">362</option><option value="363">363</option><option value="364">364</option><option value="365">365</option><option value="366">366</option><option value="367">367</option><option value="368">368</option><option value="369">369</option><option value="370">370</option><option value="371">371</option><option value="372">372</option><option value="373">373</option><option value="374">374</option><option value="375">375</option><option value="376">376</option><option value="377">377</option><option value="378">378</option><option value="379">379</option><option value="380">380</option><option value="381">381</option><option value="382">382</option><option value="383">383</option><option value="384">384</option><option value="385">385</option><option value="386">386</option><option value="387">387</option><option value="388">388</option><option value="389">389</option><option value="390">390</option><option value="391">391</option><option value="392">392</option><option value="393">393</option><option value="394">394</option><option value="395">395</option><option value="396">396</option><option value="397">397</option><option value="398">398</option><option value="399">399</option><option value="400">400</option><option value="401">401</option><option value="402">402</option><option value="403">403</option><option value="404">404</option><option value="405">405</option><option value="406">406</option><option value="407">407</option><option value="408">408</option><option value="409">409</option><option value="410">410</option><option value="411">411</option><option value="412">412</option><option value="413">413</option><option value="414">414</option><option value="415">415</option><option value="416">416</option><option value="417">417</option><option value="418">418</option><option value="419">419</option><option value="420">420</option><option value="421">421</option><option value="422">422</option><option value="423">423</option><option value="424">424</option><option value="425">425</option><option value="426">426</option><option value="427">427</option><option value="428">428</option><option value="429">429</option><option value="430">430</option><option value="431">431</option><option value="432">432</option><option value="433">433</option><option value="434">434</option><option value="435">435</option><option value="436">436</option><option value="437">437</option><option value="438">438</option><option value="439">439</option><option value="440">440</option><option value="441">441</option><option value="442">442</option><option value="443">443</option><option value="444">444</option><option value="445">445</option><option value="446">446</option><option value="447">447</option><option value="448">448</option><option value="449">449</option><option value="450">450</option><option value="451">451</option><option value="452">452</option><option value="453">453</option><option value="454">454</option><option value="455">455</option><option value="456">456</option><option value="457">457</option><option value="458">458</option><option value="459">459</option><option value="460">460</option><option value="461">461</option><option value="462">462</option><option value="463">463</option><option value="464">464</option><option value="465">465</option><option value="466">466</option><option value="467">467</option><option value="468">468</option><option value="469">469</option><option value="470">470</option><option value="471">471</option><option value="472">472</option><option value="473">473</option><option value="474">474</option><option value="475">475</option><option value="476">476</option><option value="477">477</option><option value="478">478</option><option value="479">479</option><option value="480">480</option><option value="481">481</option><option value="482">482</option><option value="483">483</option><option value="484">484</option><option value="485">485</option><option value="486">486</option><option value="487">487</option><option value="488">488</option><option value="489">489</option><option value="490">490</option><option value="491">491</option><option value="492">492</option><option value="493">493</option><option value="494">494</option><option value="495">495</option><option value="496">496</option><option value="497">497</option><option value="498">498</option><option value="499">499</option><option value="500">500</option><option value="501">501</option><option value="502">502</option><option value="503">503</option><option value="504">504</option><option value="505">505</option><option value="506">506</option><option value="507">507</option><option value="508">508</option><option value="509">509</option><option value="510">510</option><option value="511">511</option><option value="512">512</option><option value="513">513</option><option value="514">514</option><option value="515">515</option><option value="516">516</option><option value="517">517</option><option value="518">518</option><option value="519">519</option><option value="520">520</option><option value="521">521</option><option value="522">522</option><option value="523">523</option><option value="524">524</option><option value="525">525</option><option value="526">526</option><option value="527">527</option><option value="528">528</option><option value="529">529</option><option value="530">530</option><option value="531">531</option><option value="532">532</option><option value="533">533</option><option value="534">534</option><option value="535">535</option><option value="536">536</option><option value="537">537</option><option value="538">538</option><option value="539">539</option><option value="540">540</option><option value="541">541</option><option value="542">542</option><option value="543">543</option><option value="544">544</option><option value="545">545</option><option value="546">546</option><option value="547">547</option><option value="548">548</option><option value="549">549</option><option value="550">550</option><option value="551">551</option><option value="552">552</option><option value="553">553</option><option value="554">554</option><option value="555">555</option><option value="556">556</option><option value="557">557</option><option value="558">558</option><option value="559">559</option><option value="560">560</option><option value="561">561</option><option value="562">562</option><option value="563">563</option><option value="564">564</option><option value="565">565</option><option value="566">566</option><option value="567">567</option><option value="568">568</option><option value="569">569</option><option value="570">570</option><option value="571">571</option><option value="572">572</option><option value="701">701</option></select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="2" style="width: 100%;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-labelledby="select2-seisiki_hakoban-jr-container"><span class="select2-selection__rendered" id="select2-seisiki_hakoban-jr-container" role="textbox" aria-readonly="true"><span class="select2-selection__placeholder"></span></span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+        </div>
+    </div>
+    <div class="">
+        <div class="form-group">
+            <label>お気に入り</label>
+            <div>
+                <div class="radio mt_0">
+                    <label>
+                        <input type="radio" value="" name="okiniiri" checked="checked">
+                        全て
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" value="1" name="okiniiri">
+                        お気に入り
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" value="2" name="okiniiri">
+                        その他
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="">
+        <div class="form-group">
+            <label>入札状況</label>
+            <div>
+                <div class="radio mt_0">
+                    <label>
+                        <input type="radio" value="" name="nyuusatsu_done" checked="checked">
+                        全て
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" value="1" name="nyuusatsu_done">
+                        入札済み
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" value="2" name="nyuusatsu_done">
+                        入札無し
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="">
+        <div class="form-group">
+            <label>別展</label>
+            <div class="group_form_wrap checkboxes">
+                <div class="group_form_input_wrap">
+                    <div class="toggle_switch">
+                        <input id="betten_flg" name="betten_flg" type="checkbox" value="1">
+                        <label for="betten_flg">
+                            <p>
+                                <span>対象</span>
+                                <span>対象外</span>
+                            </p>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="mb_0">フリーワード</label>
+            <span data-toggle="tooltip" data-container="body" data-original-title="枝番・大分類・中分類・ブランド名・商品名・型番・素材・個体番号・色・ライン・参考定価（税抜）・ランク・その他の付属品・商品詳細情報">
+                <i class="fa fa-fw fa-question-circle for_tooltip"></i>
+            </span>
+            <input class="form-control" id="free_word3" placeholder="検索する文字を入力してください" name="free_word3" type="text" value="">
+        </div>
+    </div>
+</div>
+<script>
+    var middle_class_set = {"64":{"65":"\u30d0\u30c3\u30b0\uff08\u30d6\u30e9\u30f3\u30c9\uff09","66":"\u30d0\u30c3\u30b0\uff08\u30ce\u30f3\u30d6\u30e9\u30f3\u30c9\uff09"},"67":{"68":"\u8ca1\u5e03","69":"\u30b3\u30a4\u30f3\u30b1\u30fc\u30b9","70":"\u30ad\u30fc\u30b1\u30fc\u30b9","71":"\u30b1\u30fc\u30b9","72":"\u30dd\u30fc\u30c1","73":"\u30b9\u30c8\u30e9\u30c3\u30d7","74":"\u30ad\u30fc\u30db\u30eb\u30c0\u30fc","75":"\u624b\u5e33","76":"\u30ab\u30fc\u30c9\u30b1\u30fc\u30b9","77":"\u30b7\u30ac\u30ec\u30c3\u30c8\u30b1\u30fc\u30b9","78":"\u30ea\u30f3\u30b0","79":"\u30cd\u30c3\u30af\u30ec\u30b9","80":"\u30d6\u30ec\u30b9\u30ec\u30c3\u30c8","81":"\u30da\u30f3\u30c0\u30f3\u30c8","82":"\u30d4\u30a2\u30b9","83":"\u30a4\u30e4\u30ea\u30f3\u30b0","84":"\u30d0\u30f3\u30b0\u30eb","85":"\u30d6\u30ed\u30fc\u30c1","86":"\u30d0\u30c3\u30af\u30eb","87":"\u30d9\u30eb\u30c8","88":"\u30bf\u30a4\u30d4\u30f3","89":"\u30ab\u30d5\u30b9","90":"\u30da\u30f3","91":"\u98df\u5668","92":"\u30e1\u30ac\u30cd","93":"\u30b5\u30f3\u30b0\u30e9\u30b9","94":"\u5098","95":"\u7f6e\u7269","96":"\u9999\u6c34","97":"\u30de\u30cd\u30fc\u30af\u30ea\u30c3\u30d7","98":"\u305d\u306e\u4ed6"},"99":{"100":"\u30cd\u30af\u30bf\u30a4","101":"\u9774","102":"\u5e3d\u5b50","103":"\u30b0\u30ed\u30fc\u30d6","104":"\u30de\u30d5\u30e9\u30fc","105":"\u30b9\u30ab\u30fc\u30d5","106":"\u30b9\u30c8\u30fc\u30eb","107":"\u30b7\u30e3\u30c4","108":"\u30b9\u30fc\u30c4","109":"\u30b8\u30e3\u30b1\u30c3\u30c8","110":"\u30d1\u30f3\u30c4","111":"\u30b3\u30fc\u30c8","112":"\u30bb\u30fc\u30bf\u30fc","113":"\u30d6\u30ec\u30b6\u30fc","114":"\u30a2\u30a6\u30bf\u30fc","115":"\u30d6\u30e9\u30a6\u30b9","116":"\u30ab\u30fc\u30c7\u30a3\u30ac\u30f3","117":"\u7740\u7269","118":"\u305d\u306e\u4ed6"}};
+</script>
+                <div class="col-md-12 text-center">
+                    <a class="btn btn-default btn_w_md back_btn" href="https://member.gt-auc.jp/auctionnyuusatsu/reload">
+                        <i class="fa fa-backward"></i> 戻る
+                    </a>
+                    <button type="button" class="btn btn-default btn_w_md" onclick="location.href='https://member.gt-auc.jp/auction/nyuusatsu/list/940'">
+                        <i class="fa fa-refresh"></i> リセット
+                    </button>
+                    <button type="submit" class="btn btn-warning btn_w_md">
+                        <i class="fa fa-search"></i> 検索
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="box box-danger">
+        <form method="POST" action="https://member.gt-auc.jp/auction/nyuusatsu/all/update" accept-charset="UTF-8" id="nyuusatsu_form" onsubmit="return false;" autocomplete="off"><input name="_token" type="hidden" value="WXTkqnJqtfgcoVSQUTtG1OjgcbHjoIOAiFHZ1du2">
+            <div class="box-header with-border">
+                <h3 class="box-title">一覧</h3>
+            </div>
+
+            <div class="box-body table-wrapper data_table_wrapper">
+                 
+                                <div class="pagination_wrap">
+                    <div class="items-count">
+                        <p>5,406 件中 1 ～ 20 件を表示しています</p>
+
+                        表示件数： <select class="max_disp w_80 form-control dsp_ib" name=""><option value="0" selected="selected">20</option><option value="1">50</option><option value="2">100</option><option value="3">200</option><option value="4">300</option></select> 件
+                    </div>
+                    <div class="text-right">
+                                                    <ul class="pagination" role="navigation">
+        
+                    <li class="page-item disabled" aria-disabled="true" aria-label="« 前">
+                <span class="page-link" aria-hidden="true">‹</span>
+            </li>
+        
+        
+                                    <li class="page-item  active">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=1" tabindex="-1">1</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=2" tabindex="-1">2</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=3" tabindex="-1">3</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=4" tabindex="-1">4</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=5" tabindex="-1">5</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=6" tabindex="-1">6</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=7" tabindex="-1">7</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=8" tabindex="-1">8</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=9" tabindex="-1">9</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=10" tabindex="-1">10</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=11" tabindex="-1">11</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=12" tabindex="-1">12</a>
+                </li>
+                                                
+                <li class="page-item disabled" aria-disabled="true"><span class="page-link">...</span></li>
+                        <li class="page-item">
+                <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=271" tabindex="-1">271</a>
+            </li>
+        
+        
+                    <li class="page-item">
+                <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=2" rel="next" aria-label="次 »" tabindex="-1">›</a>
+            </li>
+            </ul>
+
+                                            </div>
+                </div>
+                <table id="example2" class="table table-bordered table-collapse table-striped mb_10 break_table">
+                                <thead>
+                    <tr>
+                        <th style="cursor : pointer;" class="sort submit_button " data-action="search" data-column="seisiki_hakoban">正式<br>箱番<i class="fa fa-exchange fa-rotate-90 pull-right"></i></th><th style="cursor : pointer;" class="sort submit_button " data-action="search" data-column="hakoban_kobangou">枝番<i class="fa fa-exchange fa-rotate-90 pull-right"></i></th><th>商品画像</th><th style="cursor : pointer;" class="sort submit_button " data-action="search" data-column="categorys">分類<i class="fa fa-exchange fa-rotate-90 pull-right"></i></th><th style="cursor : pointer;" class="sort submit_button " data-action="search" data-column="brand_name">ブランド名<i class="fa fa-exchange fa-rotate-90 pull-right"></i></th><th>商品詳細</th><th style="cursor : pointer;" class="sort submit_button " data-action="search" data-column="nyuusatsu_status">入札状態<i class="fa fa-exchange fa-rotate-90 pull-right"></i></th><th style="cursor : pointer;" class="sort submit_button " data-action="search" data-column="nyuusatsu_kingaku">入札金額<i class="fa fa-exchange fa-rotate-90 pull-right"></i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                                                                                                                        <tr class="child-cell-abbr">
+                                <td data-label="正式箱番" class="w_60">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?seisiki_hakoban=1" tabindex="-1">
+                                        1
+                                    </a>
+                                </td>
+                                <td data-label="枝番" class="w_60">
+                                        <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/545144" target="_blank" tabindex="-1">
+                                            1
+                                        </a>
+                                        <div class="okiniiri-wrap">
+                                                                                            <label class="fa fa-heart-o okiniiri-icon off" data-id="545144"></label>
+                                                                                    </div>
+                                </td>
+                                <td data-label="商品画像" class="text-center w_120">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/545144" target="_blank" tabindex="-1">
+                                        <img src="https://active-production.s3-ap-northeast-1.amazonaws.com/public/auction/hakoban/shuppin/545144/fed37441-a13f-48eb-b54f-d671d52abf09_DSC_5465.JPG">
+                                    </a>
+                                </td>
+                                <td data-label="分類" style="min-width: 70px; max-width: 200px;">
+                                                                            バッグ<br>
+                                                                        バッグ（ブランド）
+                                </td>
+                                <td data-label="ブランド名" style="min-width: 70px; max-width: 200px;">
+                                                                            エルメス
+                                                                    </td>
+                                <td data-label="商品詳細" style="min-width: 220px; max-width: 600px;">
+                                    <label>商品名：</label>
+                                    <span>コンスタンス18</span>
+                                    <label>&nbsp;型番：</label>
+                                    <span>-</span>
+                                                                                <label>&nbsp;素材：</label>
+                                            <span>ボックスカーフ</span>
+                                            <label>&nbsp;色：</label>
+                                            <span>ブルーエレクトリック</span>
+                                                                                <label>&nbsp;商品詳細情報：</label>
+                                    <span>-</span>
+                                    <label>&nbsp;付属品：</label>
+                                                                            <span>-</span>
+                                                                        <label>&nbsp;その他の付属品：</label>
+                                                                            <span>-</span>
+                                                                    </td>
+
+                                
+                                <td data-label="入札状態" class="w_100 nyuusatsu_status_label">
+                                                                            <span class="status_label red">未入札</span>
+                                                                    </td>
+                                <td data-label="入札金額" class="text-center w_150">
+                                    <input name="nyuusatsu[0][t_shuppin_id]" type="hidden" value="545144">
+                                    <input class="js-nyuusatsu-id" name="nyuusatsu[0][id]" type="hidden" value="">
+                                                                                                                                                                        <label>（入札無し）</label>
+                                                                                                                                                                                                                                                                        <div class="mt_10">
+                                                        <button class="btn btn-default w_100 memo_modal_btn" data-shuppin_id="545144" tabindex="-1">
+                                                            <i class="fa fa-pencil"></i> メモ
+                                                            <span id="memo_tooltip_545144" class="tooltip_ta_l" data-toggle="tooltip" data-html="true" data-original-title="" style="display: none"><i class="fa fa-fw fa-commenting for_tooltip"></i></span>
+                                                        </button>
+                                                    </div>
+                                                                                                                                                        </td>
+                            </tr>
+                                                                                <tr class="child-cell-abbr">
+                                <td data-label="正式箱番" class="w_60">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?seisiki_hakoban=1" tabindex="-1">
+                                        1
+                                    </a>
+                                </td>
+                                <td data-label="枝番" class="w_60">
+                                        <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/545145" target="_blank" tabindex="-1">
+                                            2
+                                        </a>
+                                        <div class="okiniiri-wrap">
+                                                                                            <label class="fa fa-heart-o okiniiri-icon off" data-id="545145"></label>
+                                                                                    </div>
+                                </td>
+                                <td data-label="商品画像" class="text-center w_120">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/545145" target="_blank" tabindex="-1">
+                                        <img src="https://active-production.s3-ap-northeast-1.amazonaws.com/public/auction/hakoban/shuppin/545145/thumb_d36579c2-b981-4a13-8da7-4ab001cbe9c9_1-2.JPG">
+                                    </a>
+                                </td>
+                                <td data-label="分類" style="min-width: 70px; max-width: 200px;">
+                                                                            バッグ<br>
+                                                                        バッグ（ブランド）
+                                </td>
+                                <td data-label="ブランド名" style="min-width: 70px; max-width: 200px;">
+                                                                            エルメス
+                                                                    </td>
+                                <td data-label="商品詳細" style="min-width: 220px; max-width: 600px;">
+                                    <label>商品名：</label>
+                                    <span>ピコタンロックMM</span>
+                                    <label>&nbsp;型番：</label>
+                                    <span>-</span>
+                                                                                <label>&nbsp;素材：</label>
+                                            <span>トリヨンクレマンス</span>
+                                            <label>&nbsp;色：</label>
+                                            <span>黒</span>
+                                                                                <label>&nbsp;商品詳細情報：</label>
+                                    <span>-</span>
+                                    <label>&nbsp;付属品：</label>
+                                                                                                                                                                                                                                                                                                <span>箱</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                        <label>&nbsp;その他の付属品：</label>
+                                                                            <span>鍵　カデナ　小袋</span>
+                                                                    </td>
+
+                                
+                                <td data-label="入札状態" class="w_100 nyuusatsu_status_label">
+                                                                            <span class="status_label red">未入札</span>
+                                                                    </td>
+                                <td data-label="入札金額" class="text-center w_150">
+                                    <input name="nyuusatsu[1][t_shuppin_id]" type="hidden" value="545145">
+                                    <input class="js-nyuusatsu-id" name="nyuusatsu[1][id]" type="hidden" value="">
+                                                                                                                                                                        <label>（入札無し）</label>
+                                                                                                                                                                                                                                                                        <div class="mt_10">
+                                                        <button class="btn btn-default w_100 memo_modal_btn" data-shuppin_id="545145" tabindex="-1">
+                                                            <i class="fa fa-pencil"></i> メモ
+                                                            <span id="memo_tooltip_545145" class="tooltip_ta_l" data-toggle="tooltip" data-html="true" data-original-title="" style="display: none"><i class="fa fa-fw fa-commenting for_tooltip"></i></span>
+                                                        </button>
+                                                    </div>
+                                                                                                                                                        </td>
+                            </tr>
+                                                                                <tr class="child-cell-abbr">
+                                <td data-label="正式箱番" class="w_60">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?seisiki_hakoban=1" tabindex="-1">
+                                        1
+                                    </a>
+                                </td>
+                                <td data-label="枝番" class="w_60">
+                                        <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/545146" target="_blank" tabindex="-1">
+                                            3
+                                        </a>
+                                        <div class="okiniiri-wrap">
+                                                                                            <label class="fa fa-heart-o okiniiri-icon off" data-id="545146"></label>
+                                                                                    </div>
+                                </td>
+                                <td data-label="商品画像" class="text-center w_120">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/545146" target="_blank" tabindex="-1">
+                                        <img src="https://active-production.s3-ap-northeast-1.amazonaws.com/public/auction/hakoban/shuppin/545146/thumb_6ff5bb8c-94a2-4daf-b4e7-dde412a6215a_1-3.JPG">
+                                    </a>
+                                </td>
+                                <td data-label="分類" style="min-width: 70px; max-width: 200px;">
+                                                                            バッグ<br>
+                                                                        バッグ（ブランド）
+                                </td>
+                                <td data-label="ブランド名" style="min-width: 70px; max-width: 200px;">
+                                                                            エルメス
+                                                                    </td>
+                                <td data-label="商品詳細" style="min-width: 220px; max-width: 600px;">
+                                    <label>商品名：</label>
+                                    <span>ピコタンロックPM</span>
+                                    <label>&nbsp;型番：</label>
+                                    <span>-</span>
+                                                                                <label>&nbsp;素材：</label>
+                                            <span>トリヨンクレマンス</span>
+                                            <label>&nbsp;色：</label>
+                                            <span>トレンチ</span>
+                                                                                <label>&nbsp;商品詳細情報：</label>
+                                    <span>-</span>
+                                    <label>&nbsp;付属品：</label>
+                                                                                                                                                                                                                                                                                                <span>箱</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                        <label>&nbsp;その他の付属品：</label>
+                                                                            <span>鍵　カデナ　小袋</span>
+                                                                    </td>
+
+                                
+                                <td data-label="入札状態" class="w_100 nyuusatsu_status_label">
+                                                                            <span class="status_label red">未入札</span>
+                                                                    </td>
+                                <td data-label="入札金額" class="text-center w_150">
+                                    <input name="nyuusatsu[2][t_shuppin_id]" type="hidden" value="545146">
+                                    <input class="js-nyuusatsu-id" name="nyuusatsu[2][id]" type="hidden" value="">
+                                                                                                                                                                        <label>（入札無し）</label>
+                                                                                                                                                                                                                                                                        <div class="mt_10">
+                                                        <button class="btn btn-default w_100 memo_modal_btn" data-shuppin_id="545146" tabindex="-1">
+                                                            <i class="fa fa-pencil"></i> メモ
+                                                            <span id="memo_tooltip_545146" class="tooltip_ta_l" data-toggle="tooltip" data-html="true" data-original-title="" style="display: none"><i class="fa fa-fw fa-commenting for_tooltip"></i></span>
+                                                        </button>
+                                                    </div>
+                                                                                                                                                        </td>
+                            </tr>
+                                                                                <tr class="child-cell-abbr">
+                                <td data-label="正式箱番" class="w_60">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?seisiki_hakoban=1" tabindex="-1">
+                                        1
+                                    </a>
+                                </td>
+                                <td data-label="枝番" class="w_60">
+                                        <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/545147" target="_blank" tabindex="-1">
+                                            4
+                                        </a>
+                                        <div class="okiniiri-wrap">
+                                                                                            <label class="fa fa-heart-o okiniiri-icon off" data-id="545147"></label>
+                                                                                    </div>
+                                </td>
+                                <td data-label="商品画像" class="text-center w_120">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/545147" target="_blank" tabindex="-1">
+                                        <img src="https://active-production.s3-ap-northeast-1.amazonaws.com/public/auction/hakoban/shuppin/545147/thumb_ed3f5277-f924-43db-b920-0f59b02daed9_1-4.JPG">
+                                    </a>
+                                </td>
+                                <td data-label="分類" style="min-width: 70px; max-width: 200px;">
+                                                                            バッグ<br>
+                                                                        バッグ（ブランド）
+                                </td>
+                                <td data-label="ブランド名" style="min-width: 70px; max-width: 200px;">
+                                                                            エルメス
+                                                                    </td>
+                                <td data-label="商品詳細" style="min-width: 220px; max-width: 600px;">
+                                    <label>商品名：</label>
+                                    <span>ピコタンロックPM</span>
+                                    <label>&nbsp;型番：</label>
+                                    <span>-</span>
+                                                                                <label>&nbsp;素材：</label>
+                                            <span>トリヨンクレマンス</span>
+                                            <label>&nbsp;色：</label>
+                                            <span>ローズアザレ</span>
+                                                                                <label>&nbsp;商品詳細情報：</label>
+                                    <span>-</span>
+                                    <label>&nbsp;付属品：</label>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <span>袋</span>
+                                                                                                                                                                                                                        <label>&nbsp;その他の付属品：</label>
+                                                                            <span>鍵　カデナ　</span>
+                                                                    </td>
+
+                                
+                                <td data-label="入札状態" class="w_100 nyuusatsu_status_label">
+                                                                            <span class="status_label red">未入札</span>
+                                                                    </td>
+                                <td data-label="入札金額" class="text-center w_150">
+                                    <input name="nyuusatsu[3][t_shuppin_id]" type="hidden" value="545147">
+                                    <input class="js-nyuusatsu-id" name="nyuusatsu[3][id]" type="hidden" value="">
+                                                                                                                                                                        <label>（入札無し）</label>
+                                                                                                                                                                                                                                                                        <div class="mt_10">
+                                                        <button class="btn btn-default w_100 memo_modal_btn" data-shuppin_id="545147" tabindex="-1">
+                                                            <i class="fa fa-pencil"></i> メモ
+                                                            <span id="memo_tooltip_545147" class="tooltip_ta_l" data-toggle="tooltip" data-html="true" data-original-title="" style="display: none"><i class="fa fa-fw fa-commenting for_tooltip"></i></span>
+                                                        </button>
+                                                    </div>
+                                                                                                                                                        </td>
+                            </tr>
+                                                                                <tr class="child-cell-abbr">
+                                <td data-label="正式箱番" class="w_60">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?seisiki_hakoban=1" tabindex="-1">
+                                        1
+                                    </a>
+                                </td>
+                                <td data-label="枝番" class="w_60">
+                                        <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/545148" target="_blank" tabindex="-1">
+                                            5
+                                        </a>
+                                        <div class="okiniiri-wrap">
+                                                                                            <label class="fa fa-heart-o okiniiri-icon off" data-id="545148"></label>
+                                                                                    </div>
+                                </td>
+                                <td data-label="商品画像" class="text-center w_120">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/545148" target="_blank" tabindex="-1">
+                                        <img src="https://active-production.s3-ap-northeast-1.amazonaws.com/public/auction/hakoban/shuppin/545148/thumb_5bb52d7f-4d56-4df6-9664-9e5463963709_1-5.JPG">
+                                    </a>
+                                </td>
+                                <td data-label="分類" style="min-width: 70px; max-width: 200px;">
+                                                                            バッグ<br>
+                                                                        バッグ（ブランド）
+                                </td>
+                                <td data-label="ブランド名" style="min-width: 70px; max-width: 200px;">
+                                                                            エルメス
+                                                                    </td>
+                                <td data-label="商品詳細" style="min-width: 220px; max-width: 600px;">
+                                    <label>商品名：</label>
+                                    <span>ピコタンロックPM</span>
+                                    <label>&nbsp;型番：</label>
+                                    <span>-</span>
+                                                                                <label>&nbsp;素材：</label>
+                                            <span>トリヨンクレマンス</span>
+                                            <label>&nbsp;色：</label>
+                                            <span>トレンチ</span>
+                                                                                <label>&nbsp;商品詳細情報：</label>
+                                    <span>-</span>
+                                    <label>&nbsp;付属品：</label>
+                                                                            <span>-</span>
+                                                                        <label>&nbsp;その他の付属品：</label>
+                                                                            <span>-</span>
+                                                                    </td>
+
+                                
+                                <td data-label="入札状態" class="w_100 nyuusatsu_status_label">
+                                                                            <span class="status_label red">未入札</span>
+                                                                    </td>
+                                <td data-label="入札金額" class="text-center w_150">
+                                    <input name="nyuusatsu[4][t_shuppin_id]" type="hidden" value="545148">
+                                    <input class="js-nyuusatsu-id" name="nyuusatsu[4][id]" type="hidden" value="">
+                                                                                                                                                                        <label>（入札無し）</label>
+                                                                                                                                                                                                                                                                        <div class="mt_10">
+                                                        <button class="btn btn-default w_100 memo_modal_btn" data-shuppin_id="545148" tabindex="-1">
+                                                            <i class="fa fa-pencil"></i> メモ
+                                                            <span id="memo_tooltip_545148" class="tooltip_ta_l" data-toggle="tooltip" data-html="true" data-original-title="" style="display: none"><i class="fa fa-fw fa-commenting for_tooltip"></i></span>
+                                                        </button>
+                                                    </div>
+                                                                                                                                                        </td>
+                            </tr>
+                                                                                <tr class="child-cell-abbr">
+                                <td data-label="正式箱番" class="w_60">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?seisiki_hakoban=1" tabindex="-1">
+                                        1
+                                    </a>
+                                </td>
+                                <td data-label="枝番" class="w_60">
+                                        <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/545149" target="_blank" tabindex="-1">
+                                            6
+                                        </a>
+                                        <div class="okiniiri-wrap">
+                                                                                            <label class="fa fa-heart-o okiniiri-icon off" data-id="545149"></label>
+                                                                                    </div>
+                                </td>
+                                <td data-label="商品画像" class="text-center w_120">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/545149" target="_blank" tabindex="-1">
+                                        <img src="https://active-production.s3-ap-northeast-1.amazonaws.com/public/auction/hakoban/shuppin/545149/thumb_04b77a0a-a9ad-4da1-be2d-a4e168b36c44_1-6.JPG">
+                                    </a>
+                                </td>
+                                <td data-label="分類" style="min-width: 70px; max-width: 200px;">
+                                                                            バッグ<br>
+                                                                        バッグ（ブランド）
+                                </td>
+                                <td data-label="ブランド名" style="min-width: 70px; max-width: 200px;">
+                                                                            エルメス
+                                                                    </td>
+                                <td data-label="商品詳細" style="min-width: 220px; max-width: 600px;">
+                                    <label>商品名：</label>
+                                    <span>デッラガヴァッレリアミニ</span>
+                                    <label>&nbsp;型番：</label>
+                                    <span>-</span>
+                                                                                <label>&nbsp;素材：</label>
+                                            <span>エトゥープ</span>
+                                            <label>&nbsp;色：</label>
+                                            <span>黒</span>
+                                                                                <label>&nbsp;商品詳細情報：</label>
+                                    <span>-</span>
+                                    <label>&nbsp;付属品：</label>
+                                                                            <span>-</span>
+                                                                        <label>&nbsp;その他の付属品：</label>
+                                                                            <span>-</span>
+                                                                    </td>
+
+                                
+                                <td data-label="入札状態" class="w_100 nyuusatsu_status_label">
+                                                                            <span class="status_label red">未入札</span>
+                                                                    </td>
+                                <td data-label="入札金額" class="text-center w_150">
+                                    <input name="nyuusatsu[5][t_shuppin_id]" type="hidden" value="545149">
+                                    <input class="js-nyuusatsu-id" name="nyuusatsu[5][id]" type="hidden" value="">
+                                                                                                                                                                        <label>（入札無し）</label>
+                                                                                                                                                                                                                                                                        <div class="mt_10">
+                                                        <button class="btn btn-default w_100 memo_modal_btn" data-shuppin_id="545149" tabindex="-1">
+                                                            <i class="fa fa-pencil"></i> メモ
+                                                            <span id="memo_tooltip_545149" class="tooltip_ta_l" data-toggle="tooltip" data-html="true" data-original-title="" style="display: none"><i class="fa fa-fw fa-commenting for_tooltip"></i></span>
+                                                        </button>
+                                                    </div>
+                                                                                                                                                        </td>
+                            </tr>
+                                                                                <tr class="child-cell-abbr">
+                                <td data-label="正式箱番" class="w_60">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?seisiki_hakoban=1" tabindex="-1">
+                                        1
+                                    </a>
+                                </td>
+                                <td data-label="枝番" class="w_60">
+                                        <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/545150" target="_blank" tabindex="-1">
+                                            7
+                                        </a>
+                                        <div class="okiniiri-wrap">
+                                                                                            <label class="fa fa-heart-o okiniiri-icon off" data-id="545150"></label>
+                                                                                    </div>
+                                </td>
+                                <td data-label="商品画像" class="text-center w_120">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/545150" target="_blank" tabindex="-1">
+                                        <img src="https://active-production.s3-ap-northeast-1.amazonaws.com/public/auction/hakoban/shuppin/545150/thumb_fc1e14a5-96c8-4ece-8713-f141f847010b_1-7.JPG">
+                                    </a>
+                                </td>
+                                <td data-label="分類" style="min-width: 70px; max-width: 200px;">
+                                                                            バッグ<br>
+                                                                        バッグ（ブランド）
+                                </td>
+                                <td data-label="ブランド名" style="min-width: 70px; max-width: 200px;">
+                                                                            ルイヴィトン
+                                                                    </td>
+                                <td data-label="商品詳細" style="min-width: 220px; max-width: 600px;">
+                                    <label>商品名：</label>
+                                    <span>カプシーヌミニ</span>
+                                    <label>&nbsp;型番：</label>
+                                    <span>-</span>
+                                                                                <label>&nbsp;素材：</label>
+                                            <span>クロコダイル</span>
+                                            <label>&nbsp;色：</label>
+                                            <span>パールホワイト</span>
+                                                                                <label>&nbsp;商品詳細情報：</label>
+                                    <span>-</span>
+                                    <label>&nbsp;付属品：</label>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <span>袋</span>
+                                                                                                                                                                                                                        <label>&nbsp;その他の付属品：</label>
+                                                                            <span>ストラップ　レインカバー</span>
+                                                                    </td>
+
+                                
+                                <td data-label="入札状態" class="w_100 nyuusatsu_status_label">
+                                                                            <span class="status_label red">未入札</span>
+                                                                    </td>
+                                <td data-label="入札金額" class="text-center w_150">
+                                    <input name="nyuusatsu[6][t_shuppin_id]" type="hidden" value="545150">
+                                    <input class="js-nyuusatsu-id" name="nyuusatsu[6][id]" type="hidden" value="">
+                                                                                                                                                                        <label>（入札無し）</label>
+                                                                                                                                                                                                                                                                        <div class="mt_10">
+                                                        <button class="btn btn-default w_100 memo_modal_btn" data-shuppin_id="545150" tabindex="-1">
+                                                            <i class="fa fa-pencil"></i> メモ
+                                                            <span id="memo_tooltip_545150" class="tooltip_ta_l" data-toggle="tooltip" data-html="true" data-original-title="" style="display: none"><i class="fa fa-fw fa-commenting for_tooltip"></i></span>
+                                                        </button>
+                                                    </div>
+                                                                                                                                                        </td>
+                            </tr>
+                                                                                <tr class="child-cell-abbr">
+                                <td data-label="正式箱番" class="w_60">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?seisiki_hakoban=1" tabindex="-1">
+                                        1
+                                    </a>
+                                </td>
+                                <td data-label="枝番" class="w_60">
+                                        <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/545151" target="_blank" tabindex="-1">
+                                            8
+                                        </a>
+                                        <div class="okiniiri-wrap">
+                                                                                            <label class="fa fa-heart-o okiniiri-icon off" data-id="545151"></label>
+                                                                                    </div>
+                                </td>
+                                <td data-label="商品画像" class="text-center w_120">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/545151" target="_blank" tabindex="-1">
+                                        <img src="https://active-production.s3-ap-northeast-1.amazonaws.com/public/auction/hakoban/shuppin/545151/thumb_6e6f11fd-a49e-4394-973b-26446691a48e_1-8.JPG">
+                                    </a>
+                                </td>
+                                <td data-label="分類" style="min-width: 70px; max-width: 200px;">
+                                                                            バッグ<br>
+                                                                        バッグ（ブランド）
+                                </td>
+                                <td data-label="ブランド名" style="min-width: 70px; max-width: 200px;">
+                                                                            シャネル
+                                                                    </td>
+                                <td data-label="商品詳細" style="min-width: 220px; max-width: 600px;">
+                                    <label>商品名：</label>
+                                    <span>デカマトチェーンショルダーバッグ</span>
+                                    <label>&nbsp;型番：</label>
+                                    <span>-</span>
+                                                                                <label>&nbsp;素材：</label>
+                                            <span>キャビア</span>
+                                            <label>&nbsp;色：</label>
+                                            <span>黒</span>
+                                                                                <label>&nbsp;商品詳細情報：</label>
+                                    <span>-</span>
+                                    <label>&nbsp;付属品：</label>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <span>袋</span>
+                                                                                                                                                                                                                        <label>&nbsp;その他の付属品：</label>
+                                                                            <span>シール</span>
+                                                                    </td>
+
+                                
+                                <td data-label="入札状態" class="w_100 nyuusatsu_status_label">
+                                                                            <span class="status_label red">未入札</span>
+                                                                    </td>
+                                <td data-label="入札金額" class="text-center w_150">
+                                    <input name="nyuusatsu[7][t_shuppin_id]" type="hidden" value="545151">
+                                    <input class="js-nyuusatsu-id" name="nyuusatsu[7][id]" type="hidden" value="">
+                                                                                                                                                                        <label>（入札無し）</label>
+                                                                                                                                                                                                                                                                        <div class="mt_10">
+                                                        <button class="btn btn-default w_100 memo_modal_btn" data-shuppin_id="545151" tabindex="-1">
+                                                            <i class="fa fa-pencil"></i> メモ
+                                                            <span id="memo_tooltip_545151" class="tooltip_ta_l" data-toggle="tooltip" data-html="true" data-original-title="" style="display: none"><i class="fa fa-fw fa-commenting for_tooltip"></i></span>
+                                                        </button>
+                                                    </div>
+                                                                                                                                                        </td>
+                            </tr>
+                                                                                <tr class="child-cell-abbr">
+                                <td data-label="正式箱番" class="w_60">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?seisiki_hakoban=1" tabindex="-1">
+                                        1
+                                    </a>
+                                </td>
+                                <td data-label="枝番" class="w_60">
+                                        <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/545152" target="_blank" tabindex="-1">
+                                            9
+                                        </a>
+                                        <div class="okiniiri-wrap">
+                                                                                            <label class="fa fa-heart-o okiniiri-icon off" data-id="545152"></label>
+                                                                                    </div>
+                                </td>
+                                <td data-label="商品画像" class="text-center w_120">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/545152" target="_blank" tabindex="-1">
+                                        <img src="https://active-production.s3-ap-northeast-1.amazonaws.com/public/auction/hakoban/shuppin/545152/thumb_456032e7-3ded-4349-a615-d831118ffc98_1-9.JPG">
+                                    </a>
+                                </td>
+                                <td data-label="分類" style="min-width: 70px; max-width: 200px;">
+                                                                            バッグ<br>
+                                                                        バッグ（ブランド）
+                                </td>
+                                <td data-label="ブランド名" style="min-width: 70px; max-width: 200px;">
+                                                                            シャネル
+                                                                    </td>
+                                <td data-label="商品詳細" style="min-width: 220px; max-width: 600px;">
+                                    <label>商品名：</label>
+                                    <span>シングルフラップ30</span>
+                                    <label>&nbsp;型番：</label>
+                                    <span>-</span>
+                                                                                <label>&nbsp;素材：</label>
+                                            <span>キャビア</span>
+                                            <label>&nbsp;色：</label>
+                                            <span>黒</span>
+                                                                                <label>&nbsp;商品詳細情報：</label>
+                                    <span>フラップ裏サイド糸切れ</span>
+                                    <label>&nbsp;付属品：</label>
+                                                                                                                                                                                                                                                                                                                                                                                                        <span>保</span>
+                                                                                                                                                                                                                            <span>袋</span>
+                                                                                                                                                                                                                        <label>&nbsp;その他の付属品：</label>
+                                                                            <span>シール</span>
+                                                                    </td>
+
+                                
+                                <td data-label="入札状態" class="w_100 nyuusatsu_status_label">
+                                                                            <span class="status_label red">未入札</span>
+                                                                    </td>
+                                <td data-label="入札金額" class="text-center w_150">
+                                    <input name="nyuusatsu[8][t_shuppin_id]" type="hidden" value="545152">
+                                    <input class="js-nyuusatsu-id" name="nyuusatsu[8][id]" type="hidden" value="">
+                                                                                                                                                                        <label>（入札無し）</label>
+                                                                                                                                                                                                                                                                        <div class="mt_10">
+                                                        <button class="btn btn-default w_100 memo_modal_btn" data-shuppin_id="545152" tabindex="-1">
+                                                            <i class="fa fa-pencil"></i> メモ
+                                                            <span id="memo_tooltip_545152" class="tooltip_ta_l" data-toggle="tooltip" data-html="true" data-original-title="" style="display: none"><i class="fa fa-fw fa-commenting for_tooltip"></i></span>
+                                                        </button>
+                                                    </div>
+                                                                                                                                                        </td>
+                            </tr>
+                                                                                <tr class="child-cell-abbr">
+                                <td data-label="正式箱番" class="w_60">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?seisiki_hakoban=1" tabindex="-1">
+                                        1
+                                    </a>
+                                </td>
+                                <td data-label="枝番" class="w_60">
+                                        <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/545153" target="_blank" tabindex="-1">
+                                            10
+                                        </a>
+                                        <div class="okiniiri-wrap">
+                                                                                            <label class="fa fa-heart-o okiniiri-icon off" data-id="545153"></label>
+                                                                                    </div>
+                                </td>
+                                <td data-label="商品画像" class="text-center w_120">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/545153" target="_blank" tabindex="-1">
+                                        <img src="https://active-production.s3-ap-northeast-1.amazonaws.com/public/auction/hakoban/shuppin/545153/thumb_c331ffa4-d589-4af6-9c2c-a4ab501a1952_1-10.JPG">
+                                    </a>
+                                </td>
+                                <td data-label="分類" style="min-width: 70px; max-width: 200px;">
+                                                                            バッグ<br>
+                                                                        バッグ（ブランド）
+                                </td>
+                                <td data-label="ブランド名" style="min-width: 70px; max-width: 200px;">
+                                                                            シャネル
+                                                                    </td>
+                                <td data-label="商品詳細" style="min-width: 220px; max-width: 600px;">
+                                    <label>商品名：</label>
+                                    <span>ミニマトチェーンショルダーバッグ</span>
+                                    <label>&nbsp;型番：</label>
+                                    <span>-</span>
+                                                                                <label>&nbsp;素材：</label>
+                                            <span>キャビア</span>
+                                            <label>&nbsp;色：</label>
+                                            <span>ピンクベージュ</span>
+                                                                                <label>&nbsp;商品詳細情報：</label>
+                                    <span>-</span>
+                                    <label>&nbsp;付属品：</label>
+                                                                                                                                                                                                                                                                                                                                                                                                        <span>保</span>
+                                                                                                                                                                                                                            <span>袋</span>
+                                                                                                                                                                                                                        <label>&nbsp;その他の付属品：</label>
+                                                                            <span>シール</span>
+                                                                    </td>
+
+                                
+                                <td data-label="入札状態" class="w_100 nyuusatsu_status_label">
+                                                                            <span class="status_label red">未入札</span>
+                                                                    </td>
+                                <td data-label="入札金額" class="text-center w_150">
+                                    <input name="nyuusatsu[9][t_shuppin_id]" type="hidden" value="545153">
+                                    <input class="js-nyuusatsu-id" name="nyuusatsu[9][id]" type="hidden" value="">
+                                                                                                                                                                        <label>（入札無し）</label>
+                                                                                                                                                                                                                                                                        <div class="mt_10">
+                                                        <button class="btn btn-default w_100 memo_modal_btn" data-shuppin_id="545153" tabindex="-1">
+                                                            <i class="fa fa-pencil"></i> メモ
+                                                            <span id="memo_tooltip_545153" class="tooltip_ta_l" data-toggle="tooltip" data-html="true" data-original-title="" style="display: none"><i class="fa fa-fw fa-commenting for_tooltip"></i></span>
+                                                        </button>
+                                                    </div>
+                                                                                                                                                        </td>
+                            </tr>
+                                                                                <tr class="child-cell-abbr">
+                                <td data-label="正式箱番" class="w_60">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?seisiki_hakoban=2" tabindex="-1">
+                                        2
+                                    </a>
+                                </td>
+                                <td data-label="枝番" class="w_60">
+                                        <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/549340" target="_blank" tabindex="-1">
+                                            1
+                                        </a>
+                                        <div class="okiniiri-wrap">
+                                                                                            <label class="fa fa-heart-o okiniiri-icon off" data-id="549340"></label>
+                                                                                    </div>
+                                </td>
+                                <td data-label="商品画像" class="text-center w_120">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/549340" target="_blank" tabindex="-1">
+                                        <img src="https://active-production.s3-ap-northeast-1.amazonaws.com/public/auction/hakoban/shuppin/549340/2fd130e2-f391-4f00-a3e0-1b82bb0017f1_IMG_0012.JPG">
+                                    </a>
+                                </td>
+                                <td data-label="分類" style="min-width: 70px; max-width: 200px;">
+                                                                            バッグ<br>
+                                                                        バッグ（ブランド）
+                                </td>
+                                <td data-label="ブランド名" style="min-width: 70px; max-width: 200px;">
+                                                                            ルイヴィトン
+                                                                    </td>
+                                <td data-label="商品詳細" style="min-width: 220px; max-width: 600px;">
+                                    <label>商品名：</label>
+                                    <span>メッセンジャーボブールＭＭ</span>
+                                    <label>&nbsp;型番：</label>
+                                    <span>M97038</span>
+                                                                                <label>&nbsp;素材：</label>
+                                            <span>-</span>
+                                            <label>&nbsp;色：</label>
+                                            <span>-</span>
+                                                                                <label>&nbsp;商品詳細情報：</label>
+                                    <span>-</span>
+                                    <label>&nbsp;付属品：</label>
+                                                                            <span>-</span>
+                                                                        <label>&nbsp;その他の付属品：</label>
+                                                                            <span>-</span>
+                                                                    </td>
+
+                                
+                                <td data-label="入札状態" class="w_100 nyuusatsu_status_label">
+                                                                            <span class="status_label red">未入札</span>
+                                                                    </td>
+                                <td data-label="入札金額" class="text-center w_150">
+                                    <input name="nyuusatsu[10][t_shuppin_id]" type="hidden" value="549340">
+                                    <input class="js-nyuusatsu-id" name="nyuusatsu[10][id]" type="hidden" value="">
+                                                                                                                                                                        <label>（入札無し）</label>
+                                                                                                                                                                                                                                                                        <div class="mt_10">
+                                                        <button class="btn btn-default w_100 memo_modal_btn" data-shuppin_id="549340" tabindex="-1">
+                                                            <i class="fa fa-pencil"></i> メモ
+                                                            <span id="memo_tooltip_549340" class="tooltip_ta_l" data-toggle="tooltip" data-html="true" data-original-title="" style="display: none"><i class="fa fa-fw fa-commenting for_tooltip"></i></span>
+                                                        </button>
+                                                    </div>
+                                                                                                                                                        </td>
+                            </tr>
+                                                                                <tr class="child-cell-abbr">
+                                <td data-label="正式箱番" class="w_60">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?seisiki_hakoban=2" tabindex="-1">
+                                        2
+                                    </a>
+                                </td>
+                                <td data-label="枝番" class="w_60">
+                                        <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/549341" target="_blank" tabindex="-1">
+                                            2
+                                        </a>
+                                        <div class="okiniiri-wrap">
+                                                                                            <label class="fa fa-heart-o okiniiri-icon off" data-id="549341"></label>
+                                                                                    </div>
+                                </td>
+                                <td data-label="商品画像" class="text-center w_120">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/549341" target="_blank" tabindex="-1">
+                                        <img src="https://active-production.s3-ap-northeast-1.amazonaws.com/public/auction/hakoban/shuppin/549341/thumb_7b8bde0f-12bd-4a2c-b792-77bb84bb5782_2-2.JPG">
+                                    </a>
+                                </td>
+                                <td data-label="分類" style="min-width: 70px; max-width: 200px;">
+                                                                            バッグ<br>
+                                                                        バッグ（ブランド）
+                                </td>
+                                <td data-label="ブランド名" style="min-width: 70px; max-width: 200px;">
+                                                                            ルイヴィトン
+                                                                    </td>
+                                <td data-label="商品詳細" style="min-width: 220px; max-width: 600px;">
+                                    <label>商品名：</label>
+                                    <span>ウエストミンスターPM</span>
+                                    <label>&nbsp;型番：</label>
+                                    <span>N41102</span>
+                                                                                <label>&nbsp;素材：</label>
+                                            <span>-</span>
+                                            <label>&nbsp;色：</label>
+                                            <span>-</span>
+                                                                                <label>&nbsp;商品詳細情報：</label>
+                                    <span>-</span>
+                                    <label>&nbsp;付属品：</label>
+                                                                            <span>-</span>
+                                                                        <label>&nbsp;その他の付属品：</label>
+                                                                            <span></span>
+                                                                    </td>
+
+                                
+                                <td data-label="入札状態" class="w_100 nyuusatsu_status_label">
+                                                                            <span class="status_label red">未入札</span>
+                                                                    </td>
+                                <td data-label="入札金額" class="text-center w_150">
+                                    <input name="nyuusatsu[11][t_shuppin_id]" type="hidden" value="549341">
+                                    <input class="js-nyuusatsu-id" name="nyuusatsu[11][id]" type="hidden" value="">
+                                                                                                                                                                        <label>（入札無し）</label>
+                                                                                                                                                                                                                                                                        <div class="mt_10">
+                                                        <button class="btn btn-default w_100 memo_modal_btn" data-shuppin_id="549341" tabindex="-1">
+                                                            <i class="fa fa-pencil"></i> メモ
+                                                            <span id="memo_tooltip_549341" class="tooltip_ta_l" data-toggle="tooltip" data-html="true" data-original-title="" style="display: none"><i class="fa fa-fw fa-commenting for_tooltip"></i></span>
+                                                        </button>
+                                                    </div>
+                                                                                                                                                        </td>
+                            </tr>
+                                                                                <tr class="child-cell-abbr">
+                                <td data-label="正式箱番" class="w_60">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?seisiki_hakoban=2" tabindex="-1">
+                                        2
+                                    </a>
+                                </td>
+                                <td data-label="枝番" class="w_60">
+                                        <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/549342" target="_blank" tabindex="-1">
+                                            3
+                                        </a>
+                                        <div class="okiniiri-wrap">
+                                                                                            <label class="fa fa-heart-o okiniiri-icon off" data-id="549342"></label>
+                                                                                    </div>
+                                </td>
+                                <td data-label="商品画像" class="text-center w_120">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/549342" target="_blank" tabindex="-1">
+                                        <img src="https://active-production.s3-ap-northeast-1.amazonaws.com/public/auction/hakoban/shuppin/549342/thumb_d028af59-fc1b-4fa8-87bc-4a841ea48f10_2-3.JPG">
+                                    </a>
+                                </td>
+                                <td data-label="分類" style="min-width: 70px; max-width: 200px;">
+                                                                            バッグ<br>
+                                                                        バッグ（ブランド）
+                                </td>
+                                <td data-label="ブランド名" style="min-width: 70px; max-width: 200px;">
+                                                                            ルイヴィトン
+                                                                    </td>
+                                <td data-label="商品詳細" style="min-width: 220px; max-width: 600px;">
+                                    <label>商品名：</label>
+                                    <span>バムバッグ</span>
+                                    <label>&nbsp;型番：</label>
+                                    <span>M42906</span>
+                                                                                <label>&nbsp;素材：</label>
+                                            <span>-</span>
+                                            <label>&nbsp;色：</label>
+                                            <span>-</span>
+                                                                                <label>&nbsp;商品詳細情報：</label>
+                                    <span>-</span>
+                                    <label>&nbsp;付属品：</label>
+                                                                            <span>-</span>
+                                                                        <label>&nbsp;その他の付属品：</label>
+                                                                            <span></span>
+                                                                    </td>
+
+                                
+                                <td data-label="入札状態" class="w_100 nyuusatsu_status_label">
+                                                                            <span class="status_label red">未入札</span>
+                                                                    </td>
+                                <td data-label="入札金額" class="text-center w_150">
+                                    <input name="nyuusatsu[12][t_shuppin_id]" type="hidden" value="549342">
+                                    <input class="js-nyuusatsu-id" name="nyuusatsu[12][id]" type="hidden" value="">
+                                                                                                                                                                        <label>（入札無し）</label>
+                                                                                                                                                                                                                                                                        <div class="mt_10">
+                                                        <button class="btn btn-default w_100 memo_modal_btn" data-shuppin_id="549342" tabindex="-1">
+                                                            <i class="fa fa-pencil"></i> メモ
+                                                            <span id="memo_tooltip_549342" class="tooltip_ta_l" data-toggle="tooltip" data-html="true" data-original-title="" style="display: none"><i class="fa fa-fw fa-commenting for_tooltip"></i></span>
+                                                        </button>
+                                                    </div>
+                                                                                                                                                        </td>
+                            </tr>
+                                                                                <tr class="child-cell-abbr">
+                                <td data-label="正式箱番" class="w_60">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?seisiki_hakoban=2" tabindex="-1">
+                                        2
+                                    </a>
+                                </td>
+                                <td data-label="枝番" class="w_60">
+                                        <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/549343" target="_blank" tabindex="-1">
+                                            4
+                                        </a>
+                                        <div class="okiniiri-wrap">
+                                                                                            <label class="fa fa-heart-o okiniiri-icon off" data-id="549343"></label>
+                                                                                    </div>
+                                </td>
+                                <td data-label="商品画像" class="text-center w_120">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/549343" target="_blank" tabindex="-1">
+                                        <img src="https://active-production.s3-ap-northeast-1.amazonaws.com/public/auction/hakoban/shuppin/549343/thumb_e9701ff5-596d-4a20-bf55-175418cb248e_2-4.JPG">
+                                    </a>
+                                </td>
+                                <td data-label="分類" style="min-width: 70px; max-width: 200px;">
+                                                                            バッグ<br>
+                                                                        バッグ（ブランド）
+                                </td>
+                                <td data-label="ブランド名" style="min-width: 70px; max-width: 200px;">
+                                                                            ルイヴィトン
+                                                                    </td>
+                                <td data-label="商品詳細" style="min-width: 220px; max-width: 600px;">
+                                    <label>商品名：</label>
+                                    <span>シエナMM</span>
+                                    <label>&nbsp;型番：</label>
+                                    <span>N41546</span>
+                                                                                <label>&nbsp;素材：</label>
+                                            <span>-</span>
+                                            <label>&nbsp;色：</label>
+                                            <span>-</span>
+                                                                                <label>&nbsp;商品詳細情報：</label>
+                                    <span>-</span>
+                                    <label>&nbsp;付属品：</label>
+                                                                            <span>-</span>
+                                                                        <label>&nbsp;その他の付属品：</label>
+                                                                            <span>ストラップ</span>
+                                                                    </td>
+
+                                
+                                <td data-label="入札状態" class="w_100 nyuusatsu_status_label">
+                                                                            <span class="status_label red">未入札</span>
+                                                                    </td>
+                                <td data-label="入札金額" class="text-center w_150">
+                                    <input name="nyuusatsu[13][t_shuppin_id]" type="hidden" value="549343">
+                                    <input class="js-nyuusatsu-id" name="nyuusatsu[13][id]" type="hidden" value="">
+                                                                                                                                                                        <label>（入札無し）</label>
+                                                                                                                                                                                                                                                                        <div class="mt_10">
+                                                        <button class="btn btn-default w_100 memo_modal_btn" data-shuppin_id="549343" tabindex="-1">
+                                                            <i class="fa fa-pencil"></i> メモ
+                                                            <span id="memo_tooltip_549343" class="tooltip_ta_l" data-toggle="tooltip" data-html="true" data-original-title="" style="display: none"><i class="fa fa-fw fa-commenting for_tooltip"></i></span>
+                                                        </button>
+                                                    </div>
+                                                                                                                                                        </td>
+                            </tr>
+                                                                                <tr class="child-cell-abbr">
+                                <td data-label="正式箱番" class="w_60">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?seisiki_hakoban=2" tabindex="-1">
+                                        2
+                                    </a>
+                                </td>
+                                <td data-label="枝番" class="w_60">
+                                        <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/549344" target="_blank" tabindex="-1">
+                                            5
+                                        </a>
+                                        <div class="okiniiri-wrap">
+                                                                                            <label class="fa fa-heart-o okiniiri-icon off" data-id="549344"></label>
+                                                                                    </div>
+                                </td>
+                                <td data-label="商品画像" class="text-center w_120">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/549344" target="_blank" tabindex="-1">
+                                        <img src="https://active-production.s3-ap-northeast-1.amazonaws.com/public/auction/hakoban/shuppin/549344/thumb_54367296-df05-4e7c-9843-f6bdacd532ef_2-5.JPG">
+                                    </a>
+                                </td>
+                                <td data-label="分類" style="min-width: 70px; max-width: 200px;">
+                                                                            バッグ<br>
+                                                                        バッグ（ブランド）
+                                </td>
+                                <td data-label="ブランド名" style="min-width: 70px; max-width: 200px;">
+                                                                            ルイヴィトン
+                                                                    </td>
+                                <td data-label="商品詳細" style="min-width: 220px; max-width: 600px;">
+                                    <label>商品名：</label>
+                                    <span>カバ・ヴォワヤージュ</span>
+                                    <label>&nbsp;型番：</label>
+                                    <span>N41397</span>
+                                                                                <label>&nbsp;素材：</label>
+                                            <span>-</span>
+                                            <label>&nbsp;色：</label>
+                                            <span>-</span>
+                                                                                <label>&nbsp;商品詳細情報：</label>
+                                    <span>-</span>
+                                    <label>&nbsp;付属品：</label>
+                                                                            <span>-</span>
+                                                                        <label>&nbsp;その他の付属品：</label>
+                                                                            <span></span>
+                                                                    </td>
+
+                                
+                                <td data-label="入札状態" class="w_100 nyuusatsu_status_label">
+                                                                            <span class="status_label red">未入札</span>
+                                                                    </td>
+                                <td data-label="入札金額" class="text-center w_150">
+                                    <input name="nyuusatsu[14][t_shuppin_id]" type="hidden" value="549344">
+                                    <input class="js-nyuusatsu-id" name="nyuusatsu[14][id]" type="hidden" value="">
+                                                                                                                                                                        <label>（入札無し）</label>
+                                                                                                                                                                                                                                                                        <div class="mt_10">
+                                                        <button class="btn btn-default w_100 memo_modal_btn" data-shuppin_id="549344" tabindex="-1">
+                                                            <i class="fa fa-pencil"></i> メモ
+                                                            <span id="memo_tooltip_549344" class="tooltip_ta_l" data-toggle="tooltip" data-html="true" data-original-title="" style="display: none"><i class="fa fa-fw fa-commenting for_tooltip"></i></span>
+                                                        </button>
+                                                    </div>
+                                                                                                                                                        </td>
+                            </tr>
+                                                                                <tr class="child-cell-abbr">
+                                <td data-label="正式箱番" class="w_60">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?seisiki_hakoban=2" tabindex="-1">
+                                        2
+                                    </a>
+                                </td>
+                                <td data-label="枝番" class="w_60">
+                                        <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/549345" target="_blank" tabindex="-1">
+                                            6
+                                        </a>
+                                        <div class="okiniiri-wrap">
+                                                                                            <label class="fa fa-heart-o okiniiri-icon off" data-id="549345"></label>
+                                                                                    </div>
+                                </td>
+                                <td data-label="商品画像" class="text-center w_120">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/549345" target="_blank" tabindex="-1">
+                                        <img src="https://active-production.s3-ap-northeast-1.amazonaws.com/public/auction/hakoban/shuppin/549345/thumb_19cd1b41-3c46-4e72-b456-582d3607bba5_2-6.JPG">
+                                    </a>
+                                </td>
+                                <td data-label="分類" style="min-width: 70px; max-width: 200px;">
+                                                                            バッグ<br>
+                                                                        バッグ（ブランド）
+                                </td>
+                                <td data-label="ブランド名" style="min-width: 70px; max-width: 200px;">
+                                                                            ルイヴィトン
+                                                                    </td>
+                                <td data-label="商品詳細" style="min-width: 220px; max-width: 600px;">
+                                    <label>商品名：</label>
+                                    <span>キーポル・バンドリエール45</span>
+                                    <label>&nbsp;型番：</label>
+                                    <span>N41428</span>
+                                                                                <label>&nbsp;素材：</label>
+                                            <span>-</span>
+                                            <label>&nbsp;色：</label>
+                                            <span>-</span>
+                                                                                <label>&nbsp;商品詳細情報：</label>
+                                    <span>-</span>
+                                    <label>&nbsp;付属品：</label>
+                                                                            <span>-</span>
+                                                                        <label>&nbsp;その他の付属品：</label>
+                                                                            <span>ストラップ</span>
+                                                                    </td>
+
+                                
+                                <td data-label="入札状態" class="w_100 nyuusatsu_status_label">
+                                                                            <span class="status_label red">未入札</span>
+                                                                    </td>
+                                <td data-label="入札金額" class="text-center w_150">
+                                    <input name="nyuusatsu[15][t_shuppin_id]" type="hidden" value="549345">
+                                    <input class="js-nyuusatsu-id" name="nyuusatsu[15][id]" type="hidden" value="">
+                                                                                                                                                                        <label>（入札無し）</label>
+                                                                                                                                                                                                                                                                        <div class="mt_10">
+                                                        <button class="btn btn-default w_100 memo_modal_btn" data-shuppin_id="549345" tabindex="-1">
+                                                            <i class="fa fa-pencil"></i> メモ
+                                                            <span id="memo_tooltip_549345" class="tooltip_ta_l" data-toggle="tooltip" data-html="true" data-original-title="" style="display: none"><i class="fa fa-fw fa-commenting for_tooltip"></i></span>
+                                                        </button>
+                                                    </div>
+                                                                                                                                                        </td>
+                            </tr>
+                                                                                <tr class="child-cell-abbr">
+                                <td data-label="正式箱番" class="w_60">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?seisiki_hakoban=2" tabindex="-1">
+                                        2
+                                    </a>
+                                </td>
+                                <td data-label="枝番" class="w_60">
+                                        <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/549346" target="_blank" tabindex="-1">
+                                            7
+                                        </a>
+                                        <div class="okiniiri-wrap">
+                                                                                            <label class="fa fa-heart-o okiniiri-icon off" data-id="549346"></label>
+                                                                                    </div>
+                                </td>
+                                <td data-label="商品画像" class="text-center w_120">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/549346" target="_blank" tabindex="-1">
+                                        <img src="https://active-production.s3-ap-northeast-1.amazonaws.com/public/auction/hakoban/shuppin/549346/thumb_be3f1e39-660c-402d-a091-e2cc82b7b8fb_2-7.JPG">
+                                    </a>
+                                </td>
+                                <td data-label="分類" style="min-width: 70px; max-width: 200px;">
+                                                                            バッグ<br>
+                                                                        バッグ（ブランド）
+                                </td>
+                                <td data-label="ブランド名" style="min-width: 70px; max-width: 200px;">
+                                                                            ルイヴィトン
+                                                                    </td>
+                                <td data-label="商品詳細" style="min-width: 220px; max-width: 600px;">
+                                    <label>商品名：</label>
+                                    <span>ネヴァーフルMM</span>
+                                    <label>&nbsp;型番：</label>
+                                    <span>M41159</span>
+                                                                                <label>&nbsp;素材：</label>
+                                            <span>-</span>
+                                            <label>&nbsp;色：</label>
+                                            <span>-</span>
+                                                                                <label>&nbsp;商品詳細情報：</label>
+                                    <span>-</span>
+                                    <label>&nbsp;付属品：</label>
+                                                                            <span>-</span>
+                                                                        <label>&nbsp;その他の付属品：</label>
+                                                                            <span>ポーチ</span>
+                                                                    </td>
+
+                                
+                                <td data-label="入札状態" class="w_100 nyuusatsu_status_label">
+                                                                            <span class="status_label red">未入札</span>
+                                                                    </td>
+                                <td data-label="入札金額" class="text-center w_150">
+                                    <input name="nyuusatsu[16][t_shuppin_id]" type="hidden" value="549346">
+                                    <input class="js-nyuusatsu-id" name="nyuusatsu[16][id]" type="hidden" value="">
+                                                                                                                                                                        <label>（入札無し）</label>
+                                                                                                                                                                                                                                                                        <div class="mt_10">
+                                                        <button class="btn btn-default w_100 memo_modal_btn" data-shuppin_id="549346" tabindex="-1">
+                                                            <i class="fa fa-pencil"></i> メモ
+                                                            <span id="memo_tooltip_549346" class="tooltip_ta_l" data-toggle="tooltip" data-html="true" data-original-title="" style="display: none"><i class="fa fa-fw fa-commenting for_tooltip"></i></span>
+                                                        </button>
+                                                    </div>
+                                                                                                                                                        </td>
+                            </tr>
+                                                                                <tr class="child-cell-abbr">
+                                <td data-label="正式箱番" class="w_60">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?seisiki_hakoban=2" tabindex="-1">
+                                        2
+                                    </a>
+                                </td>
+                                <td data-label="枝番" class="w_60">
+                                        <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/549347" target="_blank" tabindex="-1">
+                                            8
+                                        </a>
+                                        <div class="okiniiri-wrap">
+                                                                                            <label class="fa fa-heart-o okiniiri-icon off" data-id="549347"></label>
+                                                                                    </div>
+                                </td>
+                                <td data-label="商品画像" class="text-center w_120">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/549347" target="_blank" tabindex="-1">
+                                        <img src="https://active-production.s3-ap-northeast-1.amazonaws.com/public/auction/hakoban/shuppin/549347/thumb_e93f5927-d03a-44eb-bc94-f08048201677_2-8.JPG">
+                                    </a>
+                                </td>
+                                <td data-label="分類" style="min-width: 70px; max-width: 200px;">
+                                                                            バッグ<br>
+                                                                        バッグ（ブランド）
+                                </td>
+                                <td data-label="ブランド名" style="min-width: 70px; max-width: 200px;">
+                                                                            ルイヴィトン
+                                                                    </td>
+                                <td data-label="商品詳細" style="min-width: 220px; max-width: 600px;">
+                                    <label>商品名：</label>
+                                    <span>スリーPM</span>
+                                    <label>&nbsp;型番：</label>
+                                    <span>M54193</span>
+                                                                                <label>&nbsp;素材：</label>
+                                            <span>-</span>
+                                            <label>&nbsp;色：</label>
+                                            <span>-</span>
+                                                                                <label>&nbsp;商品詳細情報：</label>
+                                    <span>-</span>
+                                    <label>&nbsp;付属品：</label>
+                                                                            <span>-</span>
+                                                                        <label>&nbsp;その他の付属品：</label>
+                                                                            <span>ストラップ</span>
+                                                                    </td>
+
+                                
+                                <td data-label="入札状態" class="w_100 nyuusatsu_status_label">
+                                                                            <span class="status_label red">未入札</span>
+                                                                    </td>
+                                <td data-label="入札金額" class="text-center w_150">
+                                    <input name="nyuusatsu[17][t_shuppin_id]" type="hidden" value="549347">
+                                    <input class="js-nyuusatsu-id" name="nyuusatsu[17][id]" type="hidden" value="">
+                                                                                                                                                                        <label>（入札無し）</label>
+                                                                                                                                                                                                                                                                        <div class="mt_10">
+                                                        <button class="btn btn-default w_100 memo_modal_btn" data-shuppin_id="549347" tabindex="-1">
+                                                            <i class="fa fa-pencil"></i> メモ
+                                                            <span id="memo_tooltip_549347" class="tooltip_ta_l" data-toggle="tooltip" data-html="true" data-original-title="" style="display: none"><i class="fa fa-fw fa-commenting for_tooltip"></i></span>
+                                                        </button>
+                                                    </div>
+                                                                                                                                                        </td>
+                            </tr>
+                                                                                <tr class="child-cell-abbr">
+                                <td data-label="正式箱番" class="w_60">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?seisiki_hakoban=2" tabindex="-1">
+                                        2
+                                    </a>
+                                </td>
+                                <td data-label="枝番" class="w_60">
+                                        <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/549348" target="_blank" tabindex="-1">
+                                            9
+                                        </a>
+                                        <div class="okiniiri-wrap">
+                                                                                            <label class="fa fa-heart-o okiniiri-icon off" data-id="549348"></label>
+                                                                                    </div>
+                                </td>
+                                <td data-label="商品画像" class="text-center w_120">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/549348" target="_blank" tabindex="-1">
+                                        <img src="https://active-production.s3-ap-northeast-1.amazonaws.com/public/auction/hakoban/shuppin/549348/thumb_2b9470da-aa11-4f56-b6ab-356bdfe13ae8_2-9.JPG">
+                                    </a>
+                                </td>
+                                <td data-label="分類" style="min-width: 70px; max-width: 200px;">
+                                                                            バッグ<br>
+                                                                        バッグ（ブランド）
+                                </td>
+                                <td data-label="ブランド名" style="min-width: 70px; max-width: 200px;">
+                                                                            ルイヴィトン
+                                                                    </td>
+                                <td data-label="商品詳細" style="min-width: 220px; max-width: 600px;">
+                                    <label>商品名：</label>
+                                    <span>キーポル・バンドリエール50</span>
+                                    <label>&nbsp;型番：</label>
+                                    <span>M46771</span>
+                                                                                <label>&nbsp;素材：</label>
+                                            <span>-</span>
+                                            <label>&nbsp;色：</label>
+                                            <span>イエロー</span>
+                                                                                <label>&nbsp;商品詳細情報：</label>
+                                    <span>-</span>
+                                    <label>&nbsp;付属品：</label>
+                                                                            <span>-</span>
+                                                                        <label>&nbsp;その他の付属品：</label>
+                                                                            <span>ストラップ ネームタグ</span>
+                                                                    </td>
+
+                                
+                                <td data-label="入札状態" class="w_100 nyuusatsu_status_label">
+                                                                            <span class="status_label red">未入札</span>
+                                                                    </td>
+                                <td data-label="入札金額" class="text-center w_150">
+                                    <input name="nyuusatsu[18][t_shuppin_id]" type="hidden" value="549348">
+                                    <input class="js-nyuusatsu-id" name="nyuusatsu[18][id]" type="hidden" value="">
+                                                                                                                                                                        <label>（入札無し）</label>
+                                                                                                                                                                                                                                                                        <div class="mt_10">
+                                                        <button class="btn btn-default w_100 memo_modal_btn" data-shuppin_id="549348" tabindex="-1">
+                                                            <i class="fa fa-pencil"></i> メモ
+                                                            <span id="memo_tooltip_549348" class="tooltip_ta_l" data-toggle="tooltip" data-html="true" data-original-title="" style="display: none"><i class="fa fa-fw fa-commenting for_tooltip"></i></span>
+                                                        </button>
+                                                    </div>
+                                                                                                                                                        </td>
+                            </tr>
+                                                                                <tr class="child-cell-abbr">
+                                <td data-label="正式箱番" class="w_60">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?seisiki_hakoban=2" tabindex="-1">
+                                        2
+                                    </a>
+                                </td>
+                                <td data-label="枝番" class="w_60">
+                                        <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/549349" target="_blank" tabindex="-1">
+                                            10
+                                        </a>
+                                        <div class="okiniiri-wrap">
+                                                                                            <label class="fa fa-heart-o okiniiri-icon off" data-id="549349"></label>
+                                                                                    </div>
+                                </td>
+                                <td data-label="商品画像" class="text-center w_120">
+                                    <a class="underline" href="https://member.gt-auc.jp/auction/nyuusatsu/edit/549349" target="_blank" tabindex="-1">
+                                        <img src="https://active-production.s3-ap-northeast-1.amazonaws.com/public/auction/hakoban/shuppin/549349/thumb_7e6efc93-a246-4360-8edd-1b24aaa62f51_2-10.JPG">
+                                    </a>
+                                </td>
+                                <td data-label="分類" style="min-width: 70px; max-width: 200px;">
+                                                                            バッグ<br>
+                                                                        バッグ（ブランド）
+                                </td>
+                                <td data-label="ブランド名" style="min-width: 70px; max-width: 200px;">
+                                                                            ルイヴィトン
+                                                                    </td>
+                                <td data-label="商品詳細" style="min-width: 220px; max-width: 600px;">
+                                    <label>商品名：</label>
+                                    <span>キャリーイット トラベルウィズ</span>
+                                    <label>&nbsp;型番：</label>
+                                    <span>M15121</span>
+                                                                                <label>&nbsp;素材：</label>
+                                            <span>-</span>
+                                            <label>&nbsp;色：</label>
+                                            <span>-</span>
+                                                                                <label>&nbsp;商品詳細情報：</label>
+                                    <span>-</span>
+                                    <label>&nbsp;付属品：</label>
+                                                                            <span>-</span>
+                                                                        <label>&nbsp;その他の付属品：</label>
+                                                                            <span></span>
+                                                                    </td>
+
+                                
+                                <td data-label="入札状態" class="w_100 nyuusatsu_status_label">
+                                                                            <span class="status_label red">未入札</span>
+                                                                    </td>
+                                <td data-label="入札金額" class="text-center w_150">
+                                    <input name="nyuusatsu[19][t_shuppin_id]" type="hidden" value="549349">
+                                    <input class="js-nyuusatsu-id" name="nyuusatsu[19][id]" type="hidden" value="">
+                                                                                                                                                                        <label>（入札無し）</label>
+                                                                                                                                                                                                                                                                        <div class="mt_10">
+                                                        <button class="btn btn-default w_100 memo_modal_btn" data-shuppin_id="549349" tabindex="-1">
+                                                            <i class="fa fa-pencil"></i> メモ
+                                                            <span id="memo_tooltip_549349" class="tooltip_ta_l" data-toggle="tooltip" data-html="true" data-original-title="" style="display: none"><i class="fa fa-fw fa-commenting for_tooltip"></i></span>
+                                                        </button>
+                                                    </div>
+                                                                                                                                                        </td>
+                            </tr>
+                                                                        </tbody>
+                    </table>
+                    <div class="pagination_wrap">
+                        <div class="items-count">
+                            5,406 件中 1 ～ 20 件を表示しています
+                        </div>
+                        <div class="text-right">
+                                                            <ul class="pagination" role="navigation">
+        
+                    <li class="page-item disabled" aria-disabled="true" aria-label="« 前">
+                <span class="page-link" aria-hidden="true">‹</span>
+            </li>
+        
+        
+                                    <li class="page-item  active">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=1" tabindex="-1">1</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=2" tabindex="-1">2</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=3" tabindex="-1">3</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=4" tabindex="-1">4</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=5" tabindex="-1">5</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=6" tabindex="-1">6</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=7" tabindex="-1">7</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=8" tabindex="-1">8</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=9" tabindex="-1">9</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=10" tabindex="-1">10</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=11" tabindex="-1">11</a>
+                </li>
+                            <li class="page-item ">
+                    <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=12" tabindex="-1">12</a>
+                </li>
+                                                
+                <li class="page-item disabled" aria-disabled="true"><span class="page-link">...</span></li>
+                        <li class="page-item">
+                <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=271" tabindex="-1">271</a>
+            </li>
+        
+        
+                    <li class="page-item">
+                <a class="page-link" href="https://member.gt-auc.jp/auction/nyuusatsu/list/940?max_disp=0&amp;auction_schedule_id=940&amp;page=2" rel="next" aria-label="次 »" tabindex="-1">›</a>
+            </li>
+            </ul>
+
+                                                    </div>
+                    </div>
+                                                                                    </div>
+        </form>
+    </div>
+</section>
+        </div>
+            <footer class="main-footer">
+        <div class="pull-right hidden-xs">
+        </div>
+        <!-- <a class="dsp_ib" href="https://gtrade.co.jp/" target="_blank">運営会社</a>　|　 -->
+        <a class="dsp_ib" href="https://member.gt-auc.jp/access">アクセス</a>　|　
+        <a class="dsp_ib" href="https://member.gt-auc.jp/terms">利用規約</a>　|　
+        <a class="dsp_ib" href="https://member.gt-auc.jp/document">取り決め事項</a>　|　
+        <a class="dsp_ib" href="https://gt-auc.jp/company" target="_blank">運営会社</a>　|　
+        <a class="dsp_ib" href="https://member.gt-auc.jp/privacy">プライバシーポリシー</a>　
+        <span class="dsp_ib">Copyright © 2026 <a href="https://gt-auc.jp/company" target="_blank">エクシードGT株式会社</a> All rights reserved.</span>
+    </footer>
+    </div>
+        <div class="modal fade" id="nyuusatsumodal" tabindex="-1" role="dialog" aria-labelledby="labeltitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form method="GET" action="https://member.gt-auc.jp/auction/nyuusatsu/bylist/update" accept-charset="UTF-8" autocomplete="off">
+                <input name="id" id="modal_nyuusatsu_id" type="hidden" value="">
+                <input name="t_shuppin_id" id="modal_shuppin_id" type="hidden" value="">
+                <input name="nyuusatsu_row" id="modal_nyuusatsu_row" type="hidden" value="">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fa fa-remove"></i></button>
+                    <h4 class="modal-title" id="labeltitle"><b>入札</b></h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        <input type="text" name="nyuusatsu_kingaku" inputmode="numeric" id="nyuusatsu_kingaku" class="form-control w_100 dsp_ib text-right w_price js-click-selected" value="">
+                        円で入札を行います。
+                    </p>
+                </div>
+                <div class="btn-box right">
+                    <div class="modal-footer">
+                        <div class="text-center">
+                            <button type="button" class="btn btn-warning btn_w_md mr_20 js-click-after-disabled" name="nyuusatsumodalsubmit"><i class="fa fa-check"></i>入札</button>
+                            <button type="button" class="btn btn-default btn_w_md" data-dismiss="modal"><i class="fa fa-remove"></i>閉じる</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+    <div class="modal fade" id="memomodal" tabindex="-1" role="dialog" aria-labelledby="labeltitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <input name="t_shuppin_id" id="memo_modal_shuppin_id" type="hidden" value="">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fa fa-remove"></i></button>
+                <h4 class="modal-title" id="labeltitle"><b>メモ</b></h4>
+            </div>
+            <div class="modal-body">
+                <p><b>50文字以内で入力してください。</b></p>
+                <textarea id="shuppin_memo" class="form-control shuppin_memo" maxlength="50" wrap="soft" style="resize:none" value=""></textarea>
+            </div>
+            <div class="btn-box right">
+                <div class="modal-footer">
+                    <div class="text-center">
+                        <button type="button" class="btn btn-warning btn_w_md mr_20" id="memo_save_btn"><i class="fa fa-check"></i>保存</button>
+                        <button type="button" class="btn btn-default btn_w_md" data-dismiss="modal"><i class="fa fa-remove"></i>閉じる</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    
+    <script src="https://member.gt-auc.jp/vendor/AdminLTE/bower_components/jquery/dist/jquery.min.js?v=1615094792"></script>
+    <!-- Bootstrap 3.3.7 -->
+    <script src="https://member.gt-auc.jp/vendor/AdminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js?v=1615094745"></script>
+    <!-- Select2 -->
+    <script src="https://member.gt-auc.jp/vendor/AdminLTE/bower_components/select2/dist/js/select2.full.min.js?v=1615094800"></script>
+    <script src="https://member.gt-auc.jp/vendor/AdminLTE/bower_components/select2/dist/js/i18n/ja.js?v=1618472378"></script>
+    <!-- InputMask -->
+    <script src="https://member.gt-auc.jp/vendor/AdminLTE/plugins/input-mask/jquery.inputmask.js?v=1615094806"></script>
+    <script src="https://member.gt-auc.jp/vendor/AdminLTE/plugins/input-mask/jquery.inputmask.date.extensions.js?v=1615094806"></script>
+    <script src="https://member.gt-auc.jp/vendor/AdminLTE/plugins/input-mask/jquery.inputmask.extensions.js?v=1615094806"></script>
+    <!-- date-range-picker -->
+    <script src="https://member.gt-auc.jp/vendor/AdminLTE/bower_components/moment/min/moment.min.js?v=1615094796"></script>
+    <script src="https://member.gt-auc.jp/vendor/AdminLTE/bower_components/bootstrap-daterangepicker/daterangepicker.js?v=1615094744"></script>
+    <!-- bootstrap datepicker -->
+    <script src="https://member.gt-auc.jp/vendor/AdminLTE/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js?v=1615094741"></script>
+    <script src="https://member.gt-auc.jp/vendor/AdminLTE/bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ja.min.js?v=1615094741"></script>
+    <!-- bootstrap color picker -->
+    <script src="https://member.gt-auc.jp/vendor/AdminLTE/bower_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js?v=1615094740"></script>
+    <!-- bootstrap time picker -->
+    <script src="https://member.gt-auc.jp/vendor/AdminLTE/plugins/timepicker/bootstrap-timepicker.min.js?v=1615094806"></script>
+    <!-- SlimScroll -->
+    <script src="https://member.gt-auc.jp/vendor/AdminLTE/bower_components/jquery-slimscroll/jquery.slimscroll.min.js?v=1615094787"></script>
+    <!-- iCheck 1.0.1 -->
+    <script src="https://member.gt-auc.jp/vendor/AdminLTE/plugins/iCheck/icheck.min.js?v=1615094805"></script>
+    <!-- FastClick -->
+    <script src="https://member.gt-auc.jp/vendor/AdminLTE/bower_components/fastclick/lib/fastclick.js?v=1615094784"></script>
+    <!-- AdminLTE App -->
+    <script src="https://member.gt-auc.jp/vendor/AdminLTE/dist/js/adminlte.min.js?v=1615094804"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="https://member.gt-auc.jp/vendor/AdminLTE/dist/js/demo.js?v=1615094804"></script>
+    <!-- Page script -->
+    <script src="https://member.gt-auc.jp/js/common/common.js?v=1770598826"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://member.gt-auc.jp/vendor/AdminLTE/plugins/sweetalert2/sweetalert2.min.js?v=1620343793"></script>
+    <!-- OpenSeadragon -->
+    <script src="https://member.gt-auc.jp/js/common/openseadragon.min.js?v=1754270307"></script>
+
+    <script>
+        // OpenSeadragonビューアインスタンスを保持するためのオブジェクト (メインページ用)
+        var osdViewers = {};
+        // モーダル用のOpenSeadragonビューアインスタンス
+        var modalOsdViewer = null;
+        // モーダル内のOpenSeadragonコンテナID
+        const MODAL_VIEWER_ID = 'modal-openseadragon-container'; // HTMLに追加したIDに合わせる
+        // OpenSeadragonのコントロールボタン画像のパス (環境に合わせて要修正)
+        // 例: OpenSeadragonのdist/imagesフォルダへのパス
+        const OSD_PREFIX_URL = "/images/"; // ここがOpenSeadragonの画像リソースの正しいパスか確認してください。
+
+        // モーダル要素のセレクタまたはID
+        const PREVIEW_MODAL_SELECTOR = '.preview-modal';
+
+        $(function() {
+            // 初期化処理
+            $('.attachSelect2').select2();
+            $('.attachCancelToSelect2').select2({ placeholder: '', allowClear: true });
+            $('.attachAddToSelect2').select2({ tags: true });
+            $('.datepicker').datepicker({
+                autoclose: true,
+                format: 'yyyy/mm/dd',
+                language: 'ja',
+            });
+
+            // --- OpenSeadragonのメインビューア初期化 ---
+            // HTMLに固定で配置したIDを使用します
+            const mainViewerId = 'main-openseadragon-viewer';
+            const $mainThumbnailArea = $('#thumbnail_area');
+
+            // ページロード時に、サムネイルリスト内の最初の画像をメインビューアに表示
+            let initialMainImageUrl = '';
+            let $formGroup = $mainThumbnailArea.closest('.form-group');
+            let $firstThumbnail = $formGroup.find('.thumbnail-img').first();
+
+            if ($firstThumbnail.length > 0) {
+                initialMainImageUrl = $firstThumbnail.attr('src');
+                // ここで最初のサムネイルの親に active クラスを追加します
+                $firstThumbnail.closest('.thumbnail-wrapper').addClass('active');
+            } else {
+                // サムネイルが見つからない場合は、既存の thumbnail-preview の src を使うフォールバック
+                initialMainImageUrl = $mainThumbnailArea.find('.thumbnail-preview').attr('src');
+            }
+
+            if ($mainThumbnailArea.length > 0 && initialMainImageUrl) {
+                osdViewers[mainViewerId] = createOsdViewer(mainViewerId, initialMainImageUrl, $mainThumbnailArea);
+            } else {
+                console.warn("Initial main image or thumbnail_area not found for OpenSeadragon initialization or cannot initialize OSD.");
+                if ($mainThumbnailArea.length > 0) {
+                    $mainThumbnailArea.find(".thumbnail-preview").attr('src', initialMainImageUrl || '').show();
+                    $('#' + mainViewerId).hide();
+                }
+            }
+
+            // --- メインビューアのサムネイル切り替え処理 ---
+            $(document).on('click', '.thumbnail-img', function() {
+                let $clickedThumbnail = $(this);
+                const src = $clickedThumbnail.attr('src');
+
+                const mainViewerId = 'main-openseadragon-viewer';
+                const $mainThumbnailArea = $('#thumbnail_area');
+
+                let $containingFormGroup = $clickedThumbnail.closest('.form-group');
+                let $activeScope = $containingFormGroup.length > 0 ? $containingFormGroup : $(document);
+
+                if ($mainThumbnailArea.length > 0) {
+                    // 既存のビューアがあれば新しい画像をオープン、なければ新規作成
+                    if (osdViewers[mainViewerId]) {
+                        osdViewers[mainViewerId].open({ type: 'image', url: src });
+                        $('#' + mainViewerId).show(); // OpenSeadragonビューアを表示
+                        $mainThumbnailArea.find(".thumbnail-preview").hide(); // フォールバック画像を非表示に
+                    } else {
+                        console.warn('Main OpenSeadragon viewer not found or destroyed, re-initializing with new image:', src);
+                        osdViewers[mainViewerId] = createOsdViewer(mainViewerId, src, $mainThumbnailArea);
+                    }
+
+                    // OpenSeadragonが非表示の場合（例えばエラー時）のために、thumbnail-preview imgのsrcも更新
+                    $mainThumbnailArea.find(".thumbnail-preview").attr('src', src).data('zoom-image', src);
+                } else {
+                    console.error('Main OpenSeadragon container area not found (id="thumbnail_area"). This should not happen if HTML is correct).');
+                }
+
+                // アクティブクラスの切り替え
+                $clickedThumbnail.closest('.thumbnail_list').find('.thumbnail-wrapper').removeClass('active');
+                $clickedThumbnail.parent('.thumbnail-wrapper').addClass('active');
+            });
+
+            // --- モーダル関連のOpenSeadragon実装 ---
+            $('.preview-modal').on('show.bs.modal', function(event) {
+                var relatedTarget = $(event.relatedTarget);
+                var topElement;
+
+                if (relatedTarget.closest('[id^="main-openseadragon-viewer"]').length > 0) {
+                    // ダブルクリックでモーダルを開いた場合 (関連ターゲットがOSDビューアの要素の場合)
+                    topElement = relatedTarget.closest('.top');
+                    // console.log('Modal show: Related target is OSD viewer, found top element:', topElement);
+                } else if (relatedTarget.closest('.top').length > 0) {
+                    // それ以外の関連ターゲット
+                    topElement = relatedTarget.closest('.top');
+                    // console.log('Modal show: Related target is not OSD viewer, found top element:', topElement);
+                } else {
+                    // 関連ターゲットから .top が見つからない場合
+                    topElement = $('.top').first();
+                    // console.warn('Modal show: Could not find related .top element. Using first .top element.');
+                }
+
+                $(this).data('related-top', topElement);
+
+                // モーダルが表示される前に既存のビューアを破棄し、コンテナをクリア
+                if (modalOsdViewer) {
+                    modalOsdViewer.destroy();
+                    modalOsdViewer = null;
+                }
+                $('#' + MODAL_VIEWER_ID).empty().css('backgroundColor', '#f0f0f0').hide();
+            });
+
+            $('.preview-modal').on('shown.bs.modal', function() {
+                var $modalBody = $(this).find('.modal-body');
+                var $modalViewerContainer = $modalBody.find('#' + MODAL_VIEWER_ID);
+
+                if ($modalViewerContainer.length === 0) {
+                    console.error("Modal OpenSeadragon container element not found: #" + MODAL_VIEWER_ID);
+                    $modalBody.append('<p style="padding: 10px; color: red;">ビューアコンテナが見つかりません。</p>');
+                    return;
+                }
+
+                $modalViewerContainer.css({
+                    width: '100%',
+                    height: '70vh',
+                    position: 'relative'
+                });
+                $modalViewerContainer.show();
+
+                var $relatedTop = $(this).data('related-top');
+                let currentImageUrl = '';
+
+                if ($relatedTop && $relatedTop.length > 0) {
+                    let $activeThumbnail = $relatedTop.find('.thumbnail-wrapper.active img');
+                    if ($activeThumbnail.length > 0) {
+                        currentImageUrl = $activeThumbnail.attr('src');
+                    } else {
+                        // アクティブなサムネイルがない場合、メインビューアの画像または最初の画像を試す
+                        currentImageUrl = $relatedTop.find('#main-openseadragon-viewer').is(':visible') ?
+                            osdViewers['main-openseadragon-viewer']?.source?.url : // OpenSeadragonがロード済みならそのURL
+                            $relatedTop.find('.thumbnail-preview').attr('src') || $relatedTop.find('.thumbnail-img').first().attr('src');
+                    }
+                } else {
+                    console.warn("Modal opened without related '.top' data. Attempting to use first active thumbnail.");
+                    let $firstActiveThumb = $('.thumbnail-wrapper.active img').first();
+                    if ($firstActiveThumb.length > 0) {
+                        currentImageUrl = $firstActiveThumb.attr('src');
+                    } else {
+                        currentImageUrl = $('.thumbnail-preview').first().attr('src'); // data('zoom-image')ではなくsrcを直接取得
+                        console.warn("Could not find active thumbnail. Using first main preview image.");
+                    }
+                }
+
+                if (currentImageUrl) {
+                    try {
+                        // modalOsdViewerがnullの場合のみ新規作成
+                        if (!modalOsdViewer) {
+                            modalOsdViewer = createOsdViewer(MODAL_VIEWER_ID, currentImageUrl, $modalBody);
+                        } else {
+                            // 既にビューアが存在する場合は画像をオープン
+                            modalOsdViewer.open({ type: 'image', url: currentImageUrl });
+                        }
+
+                        modalOsdViewer.addHandler('open', function() {
+                            $modalViewerContainer.css('backgroundColor', '');
+                        });
+                        modalOsdViewer.addHandler('open-failed', function(event) {
+                             console.error('Modal OpenSeadragon open-failed event:', event.message, currentImageUrl);
+                            $modalViewerContainer.html('<p style="padding: 10px; color: red;">画像表示に失敗しました。</p>');
+                        });
+
+                    } catch(e) {
+                         console.error("Failed to initialize Modal OpenSeadragon:", e);
+                        $modalViewerContainer.html('<p style="padding: 10px; color: red;">ビューアの初期化に失敗しました。</p>');
+                    }
+                } else {
+                     console.error("No image URL found for modal viewer.");
+                    $modalViewerContainer.html('<p style="padding: 10px;">表示する画像がありません。</p>');
+                }
+            });
+
+            $('.preview-modal').on('hidden.bs.modal', function() {
+                if (modalOsdViewer) {
+                    modalOsdViewer.destroy();
+                    modalOsdViewer = null;
+                }
+                $('#' + MODAL_VIEWER_ID).empty().hide();
+                $(this).removeData('related-top');
+
+                // モーダルが閉じた後にメインビューアを再初期化（アクティブなサムネイルの画像を表示）
+                var $relatedTop = $('.preview-modal').data('related-top') || $('.top').first();
+                let $currentActiveThumb = $relatedTop.find('.thumbnail-wrapper.active img');
+                if ($currentActiveThumb.length > 0) {
+                    let src = $currentActiveThumb.attr('src');
+                    var $mainThumbnailImg = $relatedTop.find(".thumbnail-preview");
+                    $mainThumbnailImg.attr('src', src).data('zoom-image', src);
+                    // ここで直接 createOsdViewer を呼び出すのではなく、osdViewers['main-openseadragon-viewer'].open() を使用
+                    if (osdViewers['main-openseadragon-viewer']) {
+                        osdViewers['main-openseadragon-viewer'].open({ type: 'image', url: src });
+                    } else {
+                        // メインビューアが破棄されている場合のみ再作成
+                        osdViewers['main-openseadragon-viewer'] = createOsdViewer('main-openseadragon-viewer', src, $('#thumbnail_area'));
+                    }
+                } else {
+                    var $mainThumbnailImg = $relatedTop.find(".thumbnail-preview");
+                    // アクティブなサムネイルがない場合も、メインビューアを更新
+                    if (osdViewers['main-openseadragon-viewer']) {
+                        osdViewers['main-openseadragon-viewer'].open({ type: 'image', url: $mainThumbnailImg.attr('src') });
+                    } else {
+                        osdViewers['main-openseadragon-viewer'] = createOsdViewer('main-openseadragon-viewer', $mainThumbnailImg.attr('src'), $('#thumbnail_area'));
+                    }
+                }
+            });
+
+            // モーダル内の「前へ」ボタン
+            $(document).on('click', '.preview-modal .js-thumbnail-prev', function() {
+                var $modal = $(this).closest('.preview-modal');
+                var $relatedTop = $modal.data('related-top');
+
+                if (!$relatedTop || $relatedTop.length === 0) {
+                    console.error("Cannot find related '.top' element for modal prev action.");
+                    return;
+                }
+
+                let $currentActive = $relatedTop.find('.thumbnail-wrapper.active');
+                let $allWrappers = $relatedTop.find('.thumbnail-wrapper');
+
+                if ($allWrappers.length <= 1) { return; } // 1枚以下なら何もしない
+
+                let $prevWrapper;
+                let currentIndex = $allWrappers.index($currentActive);
+
+                // 現在が最初の場合は最後に移動、それ以外は前に移動
+                if (currentIndex <= 0) {
+                    $prevWrapper = $allWrappers.last();
+                } else {
+                    $prevWrapper = $currentActive.prev('.thumbnail-wrapper');
+                }
+
+                if ($prevWrapper.length > 0) {
+                    const src = $prevWrapper.find('img').attr('src');
+                    if (modalOsdViewer && src) {
+                        // OSDビューアに新しい画像を開く
+                        modalOsdViewer.open({ type: 'image', url: src });
+                        // サムネイルのアクティブ表示を切り替え
+                        $relatedTop.find('.thumbnail-wrapper').removeClass('active');
+                        $prevWrapper.addClass('active');
+                    } else {
+                        console.warn("Previous image source not found or modal OSD viewer not ready.");
+                    }
+                }
+            });
+
+            // モーダル内の「次へ」ボタン
+            $(document).on('click', '.preview-modal .js-thumbnail-next', function() {
+                var $modal = $(this).closest('.preview-modal');
+                var $relatedTop = $modal.data('related-top');
+
+                if (!$relatedTop || $relatedTop.length === 0) {
+                    console.error("Cannot find related '.top' element for modal next action.");
+                    return;
+                }
+
+                let $currentActive = $relatedTop.find('.thumbnail-wrapper.active');
+                let $allWrappers = $relatedTop.find('.thumbnail-wrapper');
+
+                if ($allWrappers.length <= 1) { return; } // 1枚以下なら何もしない
+
+                let $nextWrapper;
+                let currentIndex = $allWrappers.index($currentActive);
+
+                // 現在が最後の場合は最初に戻る、それ以外は次に移動
+                if (currentIndex >= $allWrappers.length - 1 || currentIndex === -1) { // -1は念のため
+                    $nextWrapper = $allWrappers.first();
+                } else {
+                    $nextWrapper = $currentActive.next('.thumbnail-wrapper');
+                }
+
+                if ($nextWrapper.length > 0) {
+                    const src = $nextWrapper.find('img').attr('src');
+                    if (modalOsdViewer && src) {
+                        // OSDビューアに新しい画像を開く
+                        modalOsdViewer.open({ type: 'image', url: src });
+                        // サムネイルのアクティブ表示を切り替え
+                        $relatedTop.find('.thumbnail-wrapper').removeClass('active');
+                        $nextWrapper.addClass('active');
+                    } else {
+                        console.warn("Next image source not found or modal OSD viewer not ready.");
+                    }
+                }
+            });
+
+            // 箱一覧のページ内全選択/解除
+            $(".js-checkbox-controll").on('click', function(){
+                $("input[name='export_pdf_list[]']").prop('checked', $(this).data('checked'));
+                return false;
+            });
+        });
+
+        /**
+         * 指定されたコンテナIDと画像URLでOpenSeadragonビューアを**新規に**作成または更新する関数
+         * 既存のビューアがある場合は破棄して再作成されます。
+         * @param  {string} viewerId - OpenSeadragonを初期化するコンテナのID
+         * @param  {string} imageUrl - ロードする画像のURL
+         * @param  {jQuery} $parentArea - ビューアの親要素（.thumbnail_area またはモーダルの.modal-bodyなど）のjQueryオブジェクト
+         * @returns  {OpenSeadragon.Viewer|null} 作成されたビューアインスタンス、またはnull
+         */
+        function createOsdViewer(viewerId, imageUrl, $parentArea) {
+            const $viewerContainer = $('#' + viewerId);
+            let $currentImageElement = null; // OpenSeadragonでない場合のフォールバック表示用
+
+            // フォールバック用のimg要素の特定
+            if (viewerId === MODAL_VIEWER_ID) { // モーダル用IDに合わせる
+                $currentImageElement = $parentArea.find('.thumbnail-preview-modal');
+            } else {
+                $currentImageElement = $parentArea.find('.thumbnail-preview');
+            }
+
+            if ($viewerContainer.length === 0) {
+                console.error(`[createOsdViewer] ERROR: OpenSeadragon viewer container not found for ID: ${viewerId}`);
+                // コンテナが見つからない場合は、フォールバック画像を表示
+                if ($currentImageElement.length > 0 && imageUrl) {
+                    $currentImageElement.attr('src', imageUrl).show();
+                }
+                $parentArea.find('p.error-message').remove();
+                $parentArea.append('<p class="error-message" style="padding: 10px; color: red;">ビューアコンテナが見つかりません。</p>');
+                return null; // インスタンスが作成できなかったことを示す
+            }
+
+            // 画像URLがない場合はビューアを非表示にし、フォールバックのimgを表示
+            if (!imageUrl) {
+                console.warn(`[createOsdViewer] WARNING: No image URL provided for viewer ID: ${viewerId}. Hiding OSD viewer.`);
+                // 既存のビューアがあれば破棄
+                if (OpenSeadragon.getViewer(viewerId)) {
+                    console.warn(`[createOsdViewer] Destroying existing OpenSeadragon viewer (no image URL) for ID: ${viewerId}`);
+                    OpenSeadragon.getViewer(viewerId).destroy();
+                }
+                $viewerContainer.hide().html('');
+                if ($currentImageElement.length > 0) {
+                    $currentImageElement.show().attr('src', '').data('zoom-image', '');
+                }
+                $parentArea.find('p.error-message').remove();
+                return null;
+            }
+
+            // 既にOpenSeadragonインスタンスが存在する場合、それを破棄してから新規作成する
+            if (OpenSeadragon.getViewer(viewerId)) {
+                // console.warn(`[createOsdViewer] Existing OpenSeadragon viewer found for ID: ${viewerId}. Destroying before re-initialization.`);
+                OpenSeadragon.getViewer(viewerId).destroy();
+            }
+
+            // 新規ビューアを作成
+            try {
+                const viewer = OpenSeadragon({
+                    id: viewerId,
+                    prefixUrl: OSD_PREFIX_URL,
+                    tileSources: {
+                        type: 'image',
+                        url: imageUrl,
+                        error: function(event) {
+                            console.error(`[createOsdViewer] OpenSeadragon tileSources error for ${viewerId}:`, event.message, `URL: ${imageUrl}`);
+                            $viewerContainer.hide().html('');
+                            if ($currentImageElement.length > 0) $currentImageElement.attr('src', event.url).show();
+                            $parentArea.find('p.error-message').remove();
+                            $parentArea.append('<p class="error-message" style="padding: 10px; color: red;">画像の読み込みに失敗しました。</p>');
+                        }
+                    },
+                    showNavigator: false,
+                    showZoomControl: true,
+                    showHomeButton: false,
+                    showFullPageButton: false,
+                    visibilityRatio: 1.0,
+                    constrainDuringPan: true,
+                    animationTime: 0.3
+                });
+
+                viewer.addHandler('open', function() {
+                    $viewerContainer.css('backgroundColor', '').show();
+                    if ($currentImageElement.length > 0) $currentImageElement.hide();
+                    $parentArea.find('p.error-message').remove();
+
+                    viewer.viewport.goHome(true);
+                    viewer.viewport.fitBounds(viewer.viewport.getBounds(), true);
+                    viewer.forceRedraw();
+
+                    if (!viewer._resizeHandlerAdded) {
+                        viewer.addHandler('canvas-resize', function() {
+                            viewer.viewport.fitBounds(viewer.viewport.getBounds(), true);
+                            viewer.forceRedraw();
+                        });
+                        viewer._resizeHandlerAdded = true;
+                    }
+                });
+                viewer.addHandler('open-failed', function(event) {
+                    console.error(`[createOsdViewer][Event: open-failed] OpenSeadragon failed to open for ID: ${viewerId}:`, event.message, `URL: ${event.url}`);
+                    $viewerContainer.hide().html('');
+                    if ($currentImageElement.length > 0) $currentImageElement.attr('src', event.url).show();
+                    $parentArea.find('p.error-message').remove();
+                    $parentArea.append('<p class="error-message" style="padding: 10px; color: red;">画像表示に失敗しました。</p>');
+                });
+
+                // メインビューアにのみダブルクリックでモーダルを開くハンドラを設定
+                if (viewerId === 'main-openseadragon-viewer') {
+                    viewer.addHandler('canvas-double-click', function(event) {
+                        event.preventDefaultAction = true;
+                        const $osdContainer = $(viewer.element);
+                        const $topElement = $osdContainer.closest('.top');
+
+                        if ($topElement.length > 0) {
+                            $(PREVIEW_MODAL_SELECTOR).modal('show', $topElement[0]);
+                        } else {
+                            console.warn(`[createOsdViewer][Event: canvas-double-click] Could not find .top element. Opening modal without related target.`);
+                            $(PREVIEW_MODAL_SELECTOR).modal('show');
+                        }
+                    });
+                }
+                return viewer;
+            } catch (e) {
+                console.error(`[createOsdViewer] FATAL ERROR: Failed to initialize OpenSeadragon for ID: ${viewerId}:`, e);
+                $viewerContainer.hide().html('');
+                if ($currentImageElement.length > 0) $currentImageElement.show();
+                $parentArea.find('p.error-message').remove();
+                $parentArea.append('<p class="error-message" style="padding: 10px; color: red;">ビューアの初期化に失敗しました。</p>');
+                return null;
+            }
+        }
+
+        // モーダルが閉じた後にメインビューアを初期化し直すためのヘルパー関数（既存コードから移動）
+        // function initializeOsdViewer($element) { /* この関数は使用しないように削除します */ }
+    </script>
+        <script src="https://member.gt-auc.jp/js/common/number_utils.js?v=1697677559"></script>
+    <script src="https://member.gt-auc.jp/js/common/common_list_order.js?v=1615094718"></script>
+    <script src="https://member.gt-auc.jp/js/AuctionNyuusatsu/class_set.js?v=1634607115"></script>
+    <script src="https://member.gt-auc.jp/js/modal/nyuusatsu.js?v=1632878913"></script>
+    <script src="https://member.gt-auc.jp/js/AuctionShuppin/common_shuppin.js?v=1659316387"></script>
+    <script src="https://member.gt-auc.jp/js/modal/memo.js?v=1761009702"></script>
+    <script src="https://member.gt-auc.jp/js/common/w_price_input.js?v=1659316387"></script>
+    <script>
+
+        $(function(){
+            $('a.page-link').each(function(){
+                $(this).attr('tabindex','-1');
+            });
+        })
+        var bylistUpdateUrl = "https:\/\/member.gt-auc.jp\/auction\/nyuusatsu\/bylist\/update";
+        var allUpdateUrl = "https:\/\/member.gt-auc.jp\/auction\/nyuusatsu\/all\/update";
+        var listDestroyUrl = "https:\/\/member.gt-auc.jp\/auction\/nyuusatsu\/listdelete";
+        var okiniiriUrl = "https:\/\/member.gt-auc.jp\/auction\/nyuusatsu\/okiniiri";
+        var getMemoUrl = "https:\/\/member.gt-auc.jp\/auction\/nyuusatsu\/getmemo";
+        var saveMemoUrl = "https:\/\/member.gt-auc.jp\/auction\/nyuusatsu\/savememo";
+        var maxDispChangeUrl = "https:\/\/member.gt-auc.jp\/auction\/nyuusatsu\/list\/940";
+        var getPrevNextListUrl = "https:\/\/member.gt-auc.jp\/auction\/nyuusatsu\/prevnext\/list\/940";
+        var prevNext = [];
+    </script>
+    
+</body><!-- jQuery 3 --></html>
