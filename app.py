@@ -120,8 +120,27 @@ st.title("👜 相場検索アプリ")
 def normalize_text(text):
     if not text:
         return ""
-    # NFKC正規化により、半角カナや濁点・半濁点を全角カナに統一
     return unicodedata.normalize("NFKC", str(text)).lower()
+
+
+# --- 価格を数値(int)に安全に変換する補助関数 ---
+def clean_price(price_val):
+    if price_val is None:
+        return 0
+    if isinstance(price_val, (int, float)):
+        return int(price_val)
+    # 文字列の場合はカンマや記号、空白を除去して数値化
+    p_str = (
+        str(price_val)
+        .replace(",", "")
+        .replace("¥", "")
+        .replace("円", "")
+        .strip()
+    )
+    try:
+        return int(float(p_str))
+    except ValueError:
+        return 0
 
 
 # --- 4. AIモデル & DB設定 ---
@@ -181,7 +200,7 @@ def search_similar(query_vector, target_market="すべて", top_k=100):
             {
                 "title": title,
                 "model": model_num,
-                "price": price,
+                "price": clean_price(price),
                 "img_url": img_url,
                 "date": date_str,
                 "similarity": float(sim),
@@ -200,7 +219,6 @@ def search_by_keyword(keyword, target_market="すべて", top_k=200):
     rows = c.fetchall()
     conn.close()
 
-    # 検索キーワードを正規化（全角化・小文字化）
     norm_keyword = normalize_text(keyword)
     keywords = norm_keyword.replace(" ", " ").split()
 
@@ -209,18 +227,15 @@ def search_by_keyword(keyword, target_market="すべて", top_k=200):
         title, model_num, price, img_url, date_str = row
         date_str = str(date_str or "")
 
-        # 市場絞り込み
         if target_market == "GTのみ" and "GT" not in date_str:
             continue
         elif target_market == "RKのみ" and "GT" in date_str:
             continue
 
-        # DB内のデータも正規化（全角化）して比較
         norm_title = normalize_text(title)
         norm_model = normalize_text(model_num)
         norm_date = normalize_text(date_str)
 
-        # キーワードのアンド検索判定
         match = True
         if keywords:
             for kw in keywords:
@@ -237,7 +252,7 @@ def search_by_keyword(keyword, target_market="すべて", top_k=200):
                 {
                     "title": title,
                     "model": model_num,
-                    "price": price,
+                    "price": clean_price(price),
                     "img_url": img_url,
                     "date": date_str,
                 }
@@ -252,9 +267,11 @@ def sort_results(results, sort_option):
             results, key=lambda x: str(x.get("date", "")), reverse=True
         )
     elif sort_option == "💴 価格が高い順":
-        return sorted(results, key=lambda x: x.get("price", 0), reverse=True)
+        return sorted(
+            results, key=lambda x: clean_price(x.get("price")), reverse=True
+        )
     elif sort_option == "💴 価格が安い順":
-        return sorted(results, key=lambda x: x.get("price", 0))
+        return sorted(results, key=lambda x: clean_price(x.get("price")))
     elif sort_option == "🎯 類似度が高い順":
         return sorted(
             results, key=lambda x: x.get("similarity", 0), reverse=True
