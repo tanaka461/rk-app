@@ -116,25 +116,25 @@ st.markdown(
 st.title("👜 相場検索アプリ")
 
 
-# --- 表記表記揺れ対策（半角カナ→全角カナ変換） ---
+# --- 表記揺れ対策（半角カナ→全角カナ変換） ---
 def normalize_text(text):
     if not text:
         return ""
     return unicodedata.normalize("NFKC", str(text)).lower()
 
 
-# --- 価格を数値(int)に安全に変換する補助関数 ---
+# --- 価格を数値(int)に変換する補助関数 ---
 def clean_price(price_val):
     if price_val is None:
         return 0
     if isinstance(price_val, (int, float)):
         return int(price_val)
-    # 文字列の場合はカンマや記号、空白を除去して数値化
     p_str = (
         str(price_val)
         .replace(",", "")
         .replace("¥", "")
         .replace("円", "")
+        .replace(" ", "")
         .strip()
     )
     try:
@@ -167,7 +167,7 @@ def get_image_features(image):
     return feats.numpy().flatten()
 
 
-def search_similar(query_vector, target_market="すべて", top_k=100):
+def search_similar(query_vector, target_market="すべて"):
     conn = sqlite3.connect("rk_data.db")
     c = conn.cursor()
     c.execute(
@@ -207,11 +207,10 @@ def search_similar(query_vector, target_market="すべて", top_k=100):
             }
         )
 
-    results.sort(key=lambda x: x["similarity"], reverse=True)
-    return results[:top_k]
+    return results
 
 
-def search_by_keyword(keyword, target_market="すべて", top_k=200):
+def search_by_keyword(keyword, target_market="すべて"):
     conn = sqlite3.connect("rk_data.db")
     c = conn.cursor()
 
@@ -258,23 +257,24 @@ def search_by_keyword(keyword, target_market="すべて", top_k=200):
                 }
             )
 
-    return results[:top_k]
+    return results
 
 
 def sort_results(results, sort_option):
+    if not results:
+        return []
+
     if sort_option == "📅 日付が新しい順":
         return sorted(
             results, key=lambda x: str(x.get("date", "")), reverse=True
         )
     elif sort_option == "💴 価格が高い順":
-        return sorted(
-            results, key=lambda x: clean_price(x.get("price")), reverse=True
-        )
+        return sorted(results, key=lambda x: int(x.get("price", 0)), reverse=True)
     elif sort_option == "💴 価格が安い順":
-        return sorted(results, key=lambda x: clean_price(x.get("price")))
+        return sorted(results, key=lambda x: int(x.get("price", 0)))
     elif sort_option == "🎯 類似度が高い順":
         return sorted(
-            results, key=lambda x: x.get("similarity", 0), reverse=True
+            results, key=lambda x: float(x.get("similarity", 0.0)), reverse=True
         )
     return results
 
@@ -303,7 +303,7 @@ with tab_main1:
     ) or market_filter == "GTのみ":
         st.divider()
         kw_results = search_by_keyword(
-            search_keyword.strip(), target_market=market_filter, top_k=200
+            search_keyword.strip(), target_market=market_filter
         )
 
         col_title, col_sort = st.columns([2, 1])
@@ -320,13 +320,15 @@ with tab_main1:
                 key="kw_sort",
             )
 
+        # 検索条件に該当する全件を正しくソート
         kw_results = sort_results(kw_results, sort_order)
 
         if not kw_results:
             st.warning("一致する商品が見つかりませんでした。")
         else:
             cols = st.columns(3)
-            for idx, item in enumerate(kw_results):
+            # 表示件数を上位200件に絞り込み
+            for idx, item in enumerate(kw_results[:200]):
                 with cols[idx % 3]:
                     st.image(item["img_url"], use_container_width=True)
                     st.markdown(f"**{item['title']}**")
@@ -385,7 +387,7 @@ with tab_main2:
 
         query_vec = get_image_features(uploaded_image)
         results = search_similar(
-            query_vec, target_market=img_market_filter, top_k=100
+            query_vec, target_market=img_market_filter
         )
 
         col_title, col_sort = st.columns([2, 1])
@@ -403,13 +405,14 @@ with tab_main2:
                 key="img_sort",
             )
 
-        results = sort_results(results, img_sort_order)[:18]
+        # 全結果を並び替えてから上位18件を表示
+        sorted_results = sort_results(results, img_sort_order)[:18]
 
-        if not results:
+        if not sorted_results:
             st.warning("該当するデータが見つかりませんでした。")
         else:
             cols = st.columns(3)
-            for idx, item in enumerate(results):
+            for idx, item in enumerate(sorted_results):
                 with cols[idx % 3]:
                     st.image(item["img_url"], use_container_width=True)
                     st.markdown(f"**{item['title']}**")
