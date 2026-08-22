@@ -306,10 +306,15 @@ with tab_main1:
             search_keyword.strip(), target_market=market_filter
         )
 
+        # 全結果を先に並び替え
+        kw_results = sort_results(kw_results, sort_order if 'sort_order' in locals() else "📅 日付が新しい順")
+        
+        # 実際に画面に描画するリストを最大150件に絞り込み
+        displayed_items = kw_results[:150]
+
         col_title, col_sort = st.columns([2, 1])
         with col_title:
-            display_count = min(len(kw_results), 150)
-            st.subheader(f"🔍 検索結果 ({len(kw_results)} 件中 {display_count} 件表示)")
+            st.subheader(f"🔍 検索結果 ({len(displayed_items)} 件)")
         with col_sort:
             sort_order = st.selectbox(
                 "並び替え",
@@ -321,15 +326,15 @@ with tab_main1:
                 key="kw_sort",
             )
 
-        # 検索条件に該当する全件を正しくソート
+        # 並び替えボックスの変更を即時反映
         kw_results = sort_results(kw_results, sort_order)
+        displayed_items = kw_results[:150]
 
-        if not kw_results:
+        if not displayed_items:
             st.warning("一致する商品が見つかりませんでした。")
         else:
             cols = st.columns(3)
-            # 表示件数を上限150件に設定
-            for idx, item in enumerate(kw_results[:150]):
+            for idx, item in enumerate(displayed_items):
                 with cols[idx % 3]:
                     st.image(item["img_url"], use_container_width=True)
                     st.markdown(f"**{item['title']}**")
