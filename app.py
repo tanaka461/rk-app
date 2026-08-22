@@ -308,7 +308,8 @@ with tab_main1:
 
         col_title, col_sort = st.columns([2, 1])
         with col_title:
-            st.subheader(f"🔍 検索結果 ({len(kw_results)} 件)")
+            display_count = min(len(kw_results), 150)
+            st.subheader(f"🔍 検索結果 ({len(kw_results)} 件中 {display_count} 件表示)")
         with col_sort:
             sort_order = st.selectbox(
                 "並び替え",
@@ -327,8 +328,8 @@ with tab_main1:
             st.warning("一致する商品が見つかりませんでした。")
         else:
             cols = st.columns(3)
-            # 表示件数を上位200件に絞り込み
-            for idx, item in enumerate(kw_results[:200]):
+            # 表示件数を上限150件に設定
+            for idx, item in enumerate(kw_results[:150]):
                 with cols[idx % 3]:
                     st.image(item["img_url"], use_container_width=True)
                     st.markdown(f"**{item['title']}**")
